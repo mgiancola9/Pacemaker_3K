@@ -9,7 +9,7 @@ titleFont = ('Helvatical bold',14)
 subtextFont = ('Helvatical bold',12)
 
 def startPage():
-    title = tk.Label(box, text="Welcome to the PULSEMASTER Interface", font=titleFont, bg="yellow", height=2)
+    title = tk.Label(box, text="Welcome to the PULSEMASTER Interface", font=titleFont, bg="lightblue", height=2)
     title.pack(fill=tk.BOTH)
 
     loginButton = tk.Button(box, text ="Login", font=subtextFont)
