@@ -29,13 +29,13 @@ def startPage():
     title.pack(fill=tk.BOTH)
 
     description = tk.Label(startPage, text="Login or register a new patient below.", font=subtextFont, height=4)
-    description.pack(fill=tk.BOTH)
+    description.pack()
 
     loginButton = tk.Button(startPage, text ="Login", font=subtextFont, command=loginPage, padx=50, pady=3)
-    loginButton.pack(expand=True, pady=(0,20))  
+    loginButton.pack(pady=(0,20))  
 
     registerButton = tk.Button(startPage, text ="Register", font=subtextFont, command=registerPage, padx=40, pady=3)
-    registerButton.pack(side="top", expand=True)  
+    registerButton.pack()  
 
 # Login page
 def loginPage():
@@ -66,7 +66,10 @@ def registerPage():
     passwordTitle = tk.Label(registerPage, text="Password", font=subtextFont)
     passwordTitle.pack(fill=tk.BOTH, pady=(20,0))
     passwordEntry = tk.Entry(registerPage)
-    passwordEntry.pack()
+    passwordEntry.pack(pady=(0,20))
+
+    registerButton = tk.Button(registerPage, text ="Register", font=subtextFont, padx=40, pady=3)
+    registerButton.pack() 
 
     backButton = tk.Button(registerPage, text ="Back", font=subtextFont, command=startPage, padx=40, pady=3)
     backButton.pack(side="bottom", anchor="sw", padx=5, pady=5)
