@@ -28,10 +28,16 @@ def startPage():
     title = tk.Label(startPage, text="Welcome to the PULSEMASTER Interface", font=titleFont, bg="lightblue", height=2)
     title.pack(fill=tk.BOTH)
 
-    loginButton = tk.Button(startPage, text ="Login", font=subtextFont,command=loginPage)
+    description = tk.Label(startPage, text="Login or register a new patient below.", font=subtextFont, height=4)
+    description.pack(fill=tk.BOTH)
+
+    loginButton = tk.Button(startPage, text ="Login", font=subtextFont,command=loginPage, padx=50, pady=3)
     loginButton.pack(expand=True)  
 
-    registerButton = tk.Button(startPage, text ="Register", font=subtextFont)
+    space = tk.Label(startPage, text="", height=1)
+    space.pack()
+
+    registerButton = tk.Button(startPage, text ="Register", font=subtextFont, padx=40, pady=3)
     registerButton.pack(side="top", expand=True)  
 
 # Login page
