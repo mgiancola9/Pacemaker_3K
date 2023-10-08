@@ -61,6 +61,19 @@ def loginPage():
     title = tk.Label(loginPage, text="Login to Existing Patient", font=titleFont, bg="sienna1", height=2)
     title.pack(fill=tk.BOTH)
 
+    usernameTitle = tk.Label(loginPage, text="Username", font=subtextFont)
+    usernameTitle.pack(fill=tk.BOTH, pady=(20,0))
+    usernameEntry = tk.Entry(loginPage)
+    usernameEntry.pack()
+
+    passwordTitle = tk.Label(loginPage, text="Password", font=subtextFont)
+    passwordTitle.pack(fill=tk.BOTH, pady=(20,0))
+    passwordEntry = tk.Entry(loginPage, show="*")
+    passwordEntry.pack(pady=(0,20))
+
+    loginButton = tk.Button(loginPage, text ="Login", font=subtextFont, padx=40, pady=3)
+    loginButton.pack() 
+
     backButton = tk.Button(loginPage, text ="Back", font=subtextFont, command=startPage, padx=40, pady=3)
     backButton.pack(side="bottom", anchor="sw", padx=5, pady=5)
 
@@ -116,6 +129,9 @@ def registerPage():
 
     registerButton = tk.Button(registerPage, text ="Register", font=subtextFont, command=registerUser, padx=40, pady=3)
     registerButton.pack() 
+
+    existingUsersButton = tk.Button(registerPage, text ="Existing Users", font=subtextFont, padx=17, pady=3)
+    existingUsersButton.pack(pady=(20,0)) 
 
     backButton = tk.Button(registerPage, text ="Back", font=subtextFont, command=startPage, padx=40, pady=3)
     backButton.pack(side="bottom", anchor="sw", padx=5, pady=5)
