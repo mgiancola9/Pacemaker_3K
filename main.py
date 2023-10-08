@@ -79,11 +79,18 @@ def registerPage():
             if pastUsers[0] == username:
                 return
             
-        # Add check for good password
-
-        # Add permanent way to store users
+        # Check for good password
+        if password == "":
+            print("Password cannot be empty!")
+            return
 
         # Add check for if there are already 10 users registered
+        if len(user_data) == 10:
+            print("Max amount of user exceeded!")
+            return
+        
+        # Add permanent way to store users
+        # Add display for users for each check
             
         user_data.append([username, password])
         print(user_data[-1])
