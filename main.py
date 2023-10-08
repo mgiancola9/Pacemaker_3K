@@ -50,6 +50,7 @@ def loginPage():
     backButton.pack(side="bottom", anchor="sw", padx=5, pady=5)
 
 # Register page
+user_data = []
 def registerPage():
     registerPage = tk.Frame(box)
     registerPage.pack(fill=tk.BOTH, expand=True)
@@ -68,11 +69,31 @@ def registerPage():
     passwordEntry = tk.Entry(registerPage)
     passwordEntry.pack(pady=(0,20))
 
-    registerButton = tk.Button(registerPage, text ="Register", font=subtextFont, padx=40, pady=3)
+    # Registers the user when clicked
+    def registerUser():
+        username = usernameEntry.get()
+        password = passwordEntry.get()
+
+        # Check for if username already exists
+        for pastUsers in user_data:
+            if pastUsers[0] == username:
+                return
+            
+        # Add check for good password
+
+        # Add permanent way to store users
+
+        # Add check for if there are already 10 users registered
+            
+        user_data.append([username, password])
+        print(user_data[-1])
+
+    registerButton = tk.Button(registerPage, text ="Register", font=subtextFont, command=registerUser, padx=40, pady=3)
     registerButton.pack() 
 
     backButton = tk.Button(registerPage, text ="Back", font=subtextFont, command=startPage, padx=40, pady=3)
     backButton.pack(side="bottom", anchor="sw", padx=5, pady=5)
+
 
 
 # Start GUI with start page
