@@ -8,7 +8,6 @@ try:
         userData = json.load(file)
 except FileNotFoundError:
     userData = []
-    print("JSON file not found, make sure you are in the correct directory!")
 
 # Saves new user data to json after interface is closed
 def saveUserData():
