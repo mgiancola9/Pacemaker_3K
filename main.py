@@ -1,4 +1,20 @@
 import tkinter as tk
+from tkinter import messagebox
+import json
+
+# Load currently saved user data
+def load_user_data():
+    try:
+        with open('user_data.json', 'r') as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return []
+
+# Function that saves user data to json
+def save_user_data(data):
+    with open('user_data.json', 'w') as file:
+        json.dump(data, file)
+
 
 # Sets up GUI and size
 box = tk.Tk()
@@ -50,7 +66,7 @@ def loginPage():
     backButton.pack(side="bottom", anchor="sw", padx=5, pady=5)
 
 # Register page
-user_data = []
+user_data = load_user_data()
 def registerPage():
     registerPage = tk.Frame(box)
     registerPage.pack(fill=tk.BOTH, expand=True)
@@ -74,25 +90,30 @@ def registerPage():
         username = usernameEntry.get()
         password = passwordEntry.get()
 
+        # Check for good username
+        if username == "":
+            messagebox.showwarning("Username Error", "Username cannot be empty!", parent=box)
+            return
+          
+        # Check for good password
+        elif password == "":
+            messagebox.showwarning("Password Error", "Password cannot be empty!", parent=box)
+            return
+        
         # Check for if username already exists
         for pastUsers in user_data:
             if pastUsers[0] == username:
                 return
-            
-        # Check for good password
-        if password == "":
-            print("Password cannot be empty!")
-            return
 
         # Add check for if there are already 10 users registered
         if len(user_data) == 10:
             print("Max amount of user exceeded!")
             return
         
-        # Add permanent way to store users
         # Add display for users for each check
             
         user_data.append([username, password])
+        save_user_data(user_data) #write to json 
         print(user_data[-1])
 
     registerButton = tk.Button(registerPage, text ="Register", font=subtextFont, command=registerUser, padx=40, pady=3)
