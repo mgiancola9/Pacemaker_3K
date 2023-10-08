@@ -90,26 +90,28 @@ def registerPage():
 
         # Check for good username
         if username == "":
-            messagebox.showwarning("Username Error", "Username cannot be empty!", parent=box)
+            messagebox.showwarning("Registration Error", "Username cannot be empty!", parent=box)
             return
-          
+
         # Check for good password
         elif password == "":
-            messagebox.showwarning("Password Error", "Password cannot be empty!", parent=box)
+            messagebox.showwarning("Registration Error", "Password cannot be empty!", parent=box)
             return
         
-        # Check for if username already exists
+        # Check if there are already 10 users registered
+        elif len(userData) == 10:
+            messagebox.showwarning("Registration Error", "The max amount of users has been reached, which is 10. Consider deleting an existing user before attempting to register a new user.", parent=box)
+            return
+        
+        # Check if username already exists
         for pastUsers in userData:
             if pastUsers["username"] == username:
-                messagebox.showwarning("Username Error", "Another user already has this username!", parent=box)
+                messagebox.showwarning("Registration Error", "Another user already has this username!", parent=box)
                 return
-
-        # Add check for if there are already 10 users registered
-        if len(userData) == 10:
-            print("Max amount of users exceeded!")
-            return
         
+        # Add new user if all checks have passed
         newUser = {"username": username, "password": password}
+        messagebox.showinfo("Registration Successful", username + " has been registered!", parent=box)
         userData.append(newUser)
 
     registerButton = tk.Button(registerPage, text ="Register", font=subtextFont, command=registerUser, padx=40, pady=3)
