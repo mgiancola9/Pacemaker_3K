@@ -101,16 +101,17 @@ def registerPage():
         
         # Check for if username already exists
         for pastUsers in userData:
-            if pastUsers[0] == username:
+            if pastUsers["username"] == username:
+                messagebox.showwarning("Username Error", "Another user already has this username!", parent=box)
                 return
 
         # Add check for if there are already 10 users registered
         if len(userData) == 10:
-            print("Max amount of user exceeded!")
+            print("Max amount of users exceeded!")
             return
         
-        # Add way to star password
-        # add way to add new user to json
+        newUser = {"username": username, "password": password}
+        userData.append(newUser)
 
     registerButton = tk.Button(registerPage, text ="Register", font=subtextFont, command=registerUser, padx=40, pady=3)
     registerButton.pack() 
