@@ -170,7 +170,7 @@ def existingUsersPage():
     title = tk.Label(existingUsers, text="Existing Users", font=titleFont, bg="mediumpurple", height=2)
     title.pack(fill=tk.BOTH)
 
-    description = tk.Label(existingUsers, text=f"Current Users: {len(userData)}/10. Click on one to delete.", font=subtextFont)
+    description = tk.Label(existingUsers, text=f"Current Users: {len(userData)}/10. Click on a user to delete.", font=subtextFont)
     description.pack(pady=20)
 
     buttonsContainer = tk.Frame(existingUsers)
@@ -178,14 +178,17 @@ def existingUsersPage():
     row_num = 0  
     col_num = 0  
 
+    # Prompts user to delete user chosen
     def deleteUser(username):
         for user in userData:
             if user["username"] == username:
                 userData.remove(user)
                 break
-        
-        # registerPage()
-        existingUsersPage()
+
+        result = messagebox.askquestion("Delete User", f"Are you sure you want to delete user {username}?")
+        if result == "yes":
+            existingUsersPage()
+            messagebox.showinfo("Deletion Successful", username + " has been deleted!", parent=box)
     
     # Goes through userData and creates a button for each user
     for user in userData:
