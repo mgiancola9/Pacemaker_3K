@@ -30,18 +30,24 @@ subtextFont = ('Helvatical bold', 12, "bold")
 
 # Clears the current page, and redirects to the new one
 currentPage = None
-def redirectPage(newPage):
+def redirectPage():
     global currentPage
     if currentPage:
         currentPage.pack_forget()
 
+    # for frame in box.winfo_children():
+    #     for widget in frame.winfo_children():
+    #         widget.destroy()
+
+    newPage = tk.Frame(box)
+    newPage.pack(fill=tk.BOTH, expand=True)
     currentPage = newPage
-    newPage.pack(fill=tk.BOTH)
+
+    return newPage
 
 # Start page
 def startPage():
-    startPage = tk.Frame(box)
-    redirectPage(startPage)
+    startPage = redirectPage()
 
     title = tk.Label(startPage, text="Welcome to the PULSEMASTER Interface", font=titleFont, bg="lightblue", height=2)
     title.pack(fill=tk.BOTH)
@@ -83,9 +89,7 @@ def loginPage():
         if not user_found:
             messagebox.showwarning("Login Error", "Username does not exist. Please register first.", parent=box)
 
-    loginPage = tk.Frame(box)
-    loginPage.pack(fill=tk.BOTH, expand=True)
-    redirectPage(loginPage)
+    loginPage = redirectPage()
 
     title = tk.Label(loginPage, text="Login to Existing Patient", font=titleFont, bg="sienna1", height=2)
     title.pack(fill=tk.BOTH)
@@ -108,9 +112,7 @@ def loginPage():
 
 # Register page
 def registerPage():
-    registerPage = tk.Frame(box)
-    registerPage.pack(fill=tk.BOTH, expand=True)
-    redirectPage(registerPage)
+    registerPage = redirectPage()
 
     title = tk.Label(registerPage, text="Register New Patient", font=titleFont, bg="lightgreen", height=2)
     title.pack(fill=tk.BOTH)
@@ -167,9 +169,7 @@ def registerPage():
 
 # Existing users page
 def existingUsersPage():
-    existingUsers = tk.Canvas(box)
-    existingUsers.pack(fill=tk.BOTH, expand=True)
-    redirectPage(existingUsers)
+    existingUsers = redirectPage()
 
     title = tk.Label(existingUsers, text="Existing Users", font=titleFont, bg="mediumpurple", height=2)
     title.pack(fill=tk.BOTH)
@@ -209,9 +209,7 @@ def existingUsersPage():
 
 # Home page when user is logged in
 def homePage():
-    homePage = tk.Frame(box)
-    homePage.pack(fill=tk.BOTH, expand=True)
-    redirectPage(homePage)
+    homePage = redirectPage()
 
     username = currentUser["username"]
 
