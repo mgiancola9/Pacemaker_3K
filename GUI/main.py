@@ -163,24 +163,33 @@ def registerPage():
 
 # Existing users page
 def existingUsersPage():
-    existingUsersPage = tk.Canvas(box)
-    existingUsersPage.pack(fill=tk.BOTH, expand=True)
-    redirectPage(existingUsersPage)
+    existingUsers = tk.Canvas(box)
+    existingUsers.pack(fill=tk.BOTH, expand=True)
+    redirectPage(existingUsers)
 
-    title = tk.Label(existingUsersPage, text="Existing Users", font=titleFont, bg="mediumpurple", height=2)
+    title = tk.Label(existingUsers, text="Existing Users", font=titleFont, bg="mediumpurple", height=2)
     title.pack(fill=tk.BOTH)
 
-    description = tk.Label(existingUsersPage, text=f"Current Users: {len(userData)}/10. Click on one to delete.", font=subtextFont)
+    description = tk.Label(existingUsers, text=f"Current Users: {len(userData)}/10. Click on one to delete.", font=subtextFont)
     description.pack(pady=20)
 
-    buttonsContainer = tk.Frame(existingUsersPage)
+    buttonsContainer = tk.Frame(existingUsers)
     buttonsContainer.pack(expand=True, fill=tk.Y)
     row_num = 0  
     col_num = 0  
+
+    def deleteUser(username):
+        for user in userData:
+            if user["username"] == username:
+                userData.remove(user)
+                break
+        
+        # registerPage()
+        existingUsersPage()
     
     # Goes through userData and creates a button for each user
     for user in userData:
-        userButton = tk.Button(buttonsContainer, text=user["username"], font=subtextFont, width=12, pady=3)
+        userButton = tk.Button(buttonsContainer, text=user["username"], font=subtextFont, command=lambda name=user["username"]: deleteUser(name), width=12, pady=3)
         userButton.grid(row=row_num, column=col_num, padx=10, pady=5)
 
         # Alternate between columns, and move down rows
@@ -188,7 +197,7 @@ def existingUsersPage():
         if col_num == 0:
             row_num += 1
 
-    backButton = tk.Button(existingUsersPage, text ="Back", font=subtextFont, command=registerPage, padx=40, pady=3)
+    backButton = tk.Button(existingUsers, text ="Back", font=subtextFont, command=registerPage, padx=40, pady=3)
     backButton.pack(side="bottom", anchor="sw", padx=5, pady=5)
 
 # Start GUI with start page
