@@ -9,6 +9,9 @@ try:
 except FileNotFoundError:
     userData = []
 
+# Variable to hold the current user logged in
+currentUser = None
+
 # Saves new user data to json after interface is closed
 def saveUserData():
     with open('./GUI/userData.json', 'w') as file:
@@ -69,8 +72,9 @@ def loginPage():
             if user["username"] == username:
                 user_found = True
                 if user["password"] == password:
-                    messagebox.showinfo("Login Successful", "Welcome, " + username + "!", parent=box)
-                    # Here, you can add the logic to do something after successful login.
+                    global currentUser
+                    currentUser = user
+                    homePage()
                     return
                 else:
                     messagebox.showwarning("Login Error", "Incorrect password for the username provided.", parent=box)
@@ -202,6 +206,21 @@ def existingUsersPage():
 
     backButton = tk.Button(existingUsers, text ="Back", font=subtextFont, command=registerPage, padx=40, pady=3)
     backButton.pack(side="bottom", anchor="sw", padx=5, pady=5)
+
+# Home page when user is logged in
+def homePage():
+    homePage = tk.Frame(box)
+    homePage.pack(fill=tk.BOTH, expand=True)
+    redirectPage(homePage)
+
+    username = currentUser["username"]
+
+    title = tk.Label(homePage, text=f"Welcome, {username}!", font=titleFont, bg="mediumpurple", height=2)
+    title.pack(fill=tk.BOTH)
+
+    logoutButton = tk.Button(homePage, text ="Logout", font=subtextFont, command=startPage, padx=40, pady=3)
+    logoutButton.pack(side="bottom", anchor="se", padx=5, pady=5)
+
 
 # Start GUI with start page
 startPage()
