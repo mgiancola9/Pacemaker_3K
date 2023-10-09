@@ -54,6 +54,31 @@ def startPage():
 
 # Login page
 def loginPage():
+    def authenticateUser():
+        username = usernameEntry.get()
+        password = passwordEntry.get()
+
+        # Check for empty fields
+        if username == "" or password == "":
+            messagebox.showwarning("Login Error", "Username and password cannot be empty!", parent=box)
+            return
+
+        # Check if the user exists and the password is correct
+        user_found = False
+        for user in userData:
+            if user["username"] == username:
+                user_found = True
+                if user["password"] == password:
+                    messagebox.showinfo("Login Successful", "Welcome, " + username + "!", parent=box)
+                    # Here, you can add the logic to do something after successful login.
+                    return
+                else:
+                    messagebox.showwarning("Login Error", "Incorrect password for the username provided.", parent=box)
+                    return
+
+        if not user_found:
+            messagebox.showwarning("Login Error", "Username does not exist. Please register first.", parent=box)
+
     loginPage = tk.Frame(box)
     loginPage.pack(fill=tk.BOTH, expand=True)
     redirectPage(loginPage)
@@ -62,20 +87,21 @@ def loginPage():
     title.pack(fill=tk.BOTH)
 
     usernameTitle = tk.Label(loginPage, text="Username", font=subtextFont)
-    usernameTitle.pack(fill=tk.BOTH, pady=(20,0))
+    usernameTitle.pack(fill=tk.BOTH, pady=(20, 0))
     usernameEntry = tk.Entry(loginPage)
     usernameEntry.pack()
 
     passwordTitle = tk.Label(loginPage, text="Password", font=subtextFont)
-    passwordTitle.pack(fill=tk.BOTH, pady=(20,0))
+    passwordTitle.pack(fill=tk.BOTH, pady=(20, 0))
     passwordEntry = tk.Entry(loginPage, show="*")
-    passwordEntry.pack(pady=(0,20))
+    passwordEntry.pack(pady=(0, 20))
 
-    loginButton = tk.Button(loginPage, text ="Login", font=subtextFont, padx=40, pady=3)
-    loginButton.pack() 
+    loginButton = tk.Button(loginPage, text="Login", font=subtextFont, command=authenticateUser, padx=40, pady=3)
+    loginButton.pack()
 
-    backButton = tk.Button(loginPage, text ="Back", font=subtextFont, command=startPage, padx=40, pady=3)
+    backButton = tk.Button(loginPage, text="Back", font=subtextFont, command=startPage, padx=40, pady=3)
     backButton.pack(side="bottom", anchor="sw", padx=5, pady=5)
+
 
 # Register page
 def registerPage():
