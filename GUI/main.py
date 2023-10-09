@@ -19,7 +19,7 @@ def saveUserData():
 box = tk.Tk()
 box.title("Pacemaker GUI")
 box.geometry("500x500")
-box.minsize(400, 300)
+box.minsize(400, 400)
 
 # Variables to use for text font
 titleFont = ('Helvatical bold', 14)
@@ -130,13 +130,36 @@ def registerPage():
     registerButton = tk.Button(registerPage, text ="Register", font=subtextFont, command=registerUser, padx=40, pady=3)
     registerButton.pack() 
 
-    existingUsersButton = tk.Button(registerPage, text ="Existing Users", font=subtextFont, padx=17, pady=3)
+    existingUsersButton = tk.Button(registerPage, text ="Existing Users", font=subtextFont, command=existingUsersPage, padx=17, pady=3)
     existingUsersButton.pack(pady=(20,0)) 
 
     backButton = tk.Button(registerPage, text ="Back", font=subtextFont, command=startPage, padx=40, pady=3)
     backButton.pack(side="bottom", anchor="sw", padx=5, pady=5)
 
+# Existing users page
+def existingUsersPage():
+    scrollbar = tk.Scrollbar(box, orient=tk.VERTICAL)
+    scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+    
+    existingUsersPage = tk.Canvas(box, yscrollcommand=scrollbar.set)
+    existingUsersPage.pack(fill=tk.BOTH, expand=True)
+    redirectPage(existingUsersPage)
 
+    scrollbar.config(command=existingUsersPage.yview)
+
+    title = tk.Label(existingUsersPage, text="Existing Users", font=titleFont, bg="mediumpurple", height=2)
+    title.pack(fill=tk.BOTH)
+
+    description = tk.Label(existingUsersPage, text=f"Current Users: {len(userData)}/10. Click on one to delete.", font=subtextFont)
+    description.pack(pady=(20,0))
+
+    # Goes through userData and creates a button for each user
+    for user in userData:
+        userButton = tk.Button(existingUsersPage, text =user["username"], font=subtextFont, width = 12, pady=3)
+        userButton.pack(pady=(20,0))
+
+    backButton = tk.Button(existingUsersPage, text ="Back", font=subtextFont, command=registerPage, padx=40, pady=3)
+    backButton.pack(side="bottom", anchor="sw", padx=5, pady=5)
 
 # Start GUI with start page
 startPage()
