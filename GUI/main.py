@@ -29,20 +29,16 @@ titleFont = ('Helvatical bold', 14)
 subtextFont = ('Helvatical bold', 12, "bold")
 
 # Clears the current page, and redirects to the new one
-currentPage = None
 def redirectPage():
-    global currentPage
-    if currentPage:
-        currentPage.pack_forget()
+    # Goes through each active frame and deletes components in frame before deleting itself
+    for frame in box.winfo_children():
+        for widget in frame.winfo_children():
+            widget.destroy()
+        frame.destroy()
 
-    # for frame in box.winfo_children():
-    #     for widget in frame.winfo_children():
-    #         widget.destroy()
-
+    # Creates new frame for the current page
     newPage = tk.Frame(box)
     newPage.pack(fill=tk.BOTH, expand=True)
-    currentPage = newPage
-
     return newPage
 
 # Start page
