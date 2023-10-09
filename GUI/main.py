@@ -19,7 +19,7 @@ def saveUserData():
 box = tk.Tk()
 box.title("Pacemaker GUI")
 box.geometry("500x500")
-box.minsize(400, 400)
+box.minsize(500, 500)
 
 # Variables to use for text font
 titleFont = ('Helvatical bold', 14)
@@ -102,7 +102,6 @@ def loginPage():
     backButton = tk.Button(loginPage, text="Back", font=subtextFont, command=startPage, padx=40, pady=3)
     backButton.pack(side="bottom", anchor="sw", padx=5, pady=5)
 
-
 # Register page
 def registerPage():
     registerPage = tk.Frame(box)
@@ -164,14 +163,9 @@ def registerPage():
 
 # Existing users page
 def existingUsersPage():
-    scrollbar = tk.Scrollbar(box, orient=tk.VERTICAL)
-    scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-    
-    existingUsersPage = tk.Canvas(box, yscrollcommand=scrollbar.set)
+    existingUsersPage = tk.Canvas(box)
     existingUsersPage.pack(fill=tk.BOTH, expand=True)
     redirectPage(existingUsersPage)
-
-    scrollbar.config(command=existingUsersPage.yview)
 
     title = tk.Label(existingUsersPage, text="Existing Users", font=titleFont, bg="mediumpurple", height=2)
     title.pack(fill=tk.BOTH)
@@ -179,10 +173,20 @@ def existingUsersPage():
     description = tk.Label(existingUsersPage, text=f"Current Users: {len(userData)}/10. Click on one to delete.", font=subtextFont)
     description.pack(pady=(20,0))
 
+    buttonsContainer = tk.Frame(existingUsersPage)
+    buttonsContainer.pack(expand=True)
+    row_num = 0  
+    col_num = 0  
+    
     # Goes through userData and creates a button for each user
     for user in userData:
-        userButton = tk.Button(existingUsersPage, text =user["username"], font=subtextFont, width = 12, pady=3)
-        userButton.pack(pady=(20,0))
+        userButton = tk.Button(buttonsContainer, text=user["username"], font=subtextFont, width=12, pady=3)
+        userButton.grid(row=row_num, column=col_num, padx=10, pady=5)
+
+        # Alternate between columns, and move down rows
+        col_num = 1 - col_num
+        if col_num == 0:
+            row_num += 1
 
     backButton = tk.Button(existingUsersPage, text ="Back", font=subtextFont, command=registerPage, padx=40, pady=3)
     backButton.pack(side="bottom", anchor="sw", padx=5, pady=5)
