@@ -215,7 +215,7 @@ def homePage():
 
     username = currentUser["username"]
 
-    title = tk.Label(homePage, text=f"Welcome, {username}!", font=titleFont, bg="mediumpurple", height=2)
+    title = tk.Label(homePage, text=f"Welcome, {username}!", font=titleFont, bg="pink2", height=2)
     title.pack(fill=tk.BOTH)
 
     logoutButton = tk.Button(homePage, text ="Logout", font=subtextFont, command=startPage, padx=40, pady=3)
