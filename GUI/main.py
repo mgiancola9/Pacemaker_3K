@@ -171,10 +171,10 @@ def existingUsersPage():
     title.pack(fill=tk.BOTH)
 
     description = tk.Label(existingUsersPage, text=f"Current Users: {len(userData)}/10. Click on one to delete.", font=subtextFont)
-    description.pack(pady=(20,0))
+    description.pack(pady=20)
 
     buttonsContainer = tk.Frame(existingUsersPage)
-    buttonsContainer.pack(expand=True)
+    buttonsContainer.pack(expand=True, fill=tk.Y)
     row_num = 0  
     col_num = 0  
     
