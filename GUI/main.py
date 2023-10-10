@@ -294,7 +294,7 @@ def settingsPage(mode):
 
     # LRL label and slider
     lrlLabel = tk.Label(settingsPage, text=f"LRL: {modeValues['LRL']} ppm")
-    lrlLabel.pack()
+    lrlLabel.pack(pady=(10,0))
 
     def lrlChange(value):
         value = float(value)
@@ -311,6 +311,8 @@ def settingsPage(mode):
 
     lrlSlider = ttk.Scale(settingsPage, from_=30, to=175, length= 200, orient="horizontal", value=modeValues["LRL"], command=lrlChange)
     lrlSlider.pack()
+
+    # Make general function to update slider, and value
 
     # Bottom buttons to save and go back
     buttonFrame = tk.Frame(settingsPage)
