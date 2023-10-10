@@ -1,6 +1,22 @@
 import tkinter as tk
 from tkinter import messagebox
+from tkinter import ttk
 import json
+
+#defining constants for pacing modes based on nominal values
+LRL_VALUE = 60
+URL_VALUE = 120
+AA_VALUE = 3.5
+APW_VALUE = 0.4
+VA_VALUE = 3.5
+VPW_VALUE = 0.4
+VRP_VALUE = 320
+ARP_VALUE = 250
+AS_VALUE = 0.75
+VS_VALUE = 2.5
+PVARP_VALUE = 250
+HYST_VALUE = 60 
+RATESM_VALUE = 0
 
 # Loads currently saved user data
 try:
@@ -153,10 +169,11 @@ def registerPage():
         newUser = {
             "username": username, 
             "password": password, 
-            "VOO": {"variable": 5, "var": 6}, 
-            "VVI": {}, 
-            "AOO": {}, 
-            "AAI": {}
+            "AOO": {"LRL": LRL_VALUE, "URL": URL_VALUE, "AA": AA_VALUE, "APW": APW_VALUE},
+            "VOO": {"LRL": LRL_VALUE, "URL": URL_VALUE, "VA": VA_VALUE, "VPW": VPW_VALUE}, 
+            "AAI": {"LRL": LRL_VALUE, "URL": URL_VALUE, "AA": AA_VALUE, "APW": APW_VALUE, "AS": AS_VALUE, "ARP": ARP_VALUE, "PVARP": PVARP_VALUE, "HYST": HYST_VALUE, "RATE_SM": RATESM_VALUE},
+            "VVI": {"LRL": LRL_VALUE, "URL": URL_VALUE, "AA": AA_VALUE, "APW": APW_VALUE, "VS": VS_VALUE, "VRP": VRP_VALUE, "HYST": HYST_VALUE, "RATE_SM": RATESM_VALUE}
+            
         }
         messagebox.showinfo("Registration Successful", username + " has been registered!", parent=box)
         userData.append(newUser)
@@ -226,16 +243,16 @@ def homePage():
     buttonsContainer = tk.Frame(homePage)
     buttonsContainer.pack(fill=tk.Y)
 
-    VOOButton = tk.Button(buttonsContainer, text="VOO", font=subtextFont, width=12, pady=3)
+    VOOButton = tk.Button(buttonsContainer, text="VOO", font=subtextFont, width=12, pady=3, command=lambda: settingsPage("VOO",currentUser["VOO"]))
     VOOButton.grid(row=0, column=0, padx=10, pady=5)
-    
-    VVIButton = tk.Button(buttonsContainer, text="VVI", font=subtextFont, width=12, pady=3)
+
+    VVIButton = tk.Button(buttonsContainer, text="VVI", font=subtextFont, width=12, pady=3, command=lambda: settingsPage("VVI",currentUser["VVI"]))
     VVIButton.grid(row=0, column=1, padx=10, pady=5)
-    
-    AOOButton = tk.Button(buttonsContainer, text="AOO", font=subtextFont, width=12, pady=3)
+
+    AOOButton = tk.Button(buttonsContainer, text="AOO", font=subtextFont, width=12, pady=3, command=lambda: settingsPage("AOO",currentUser["AOO"]))
     AOOButton.grid(row=1, column=0, padx=10, pady=5)
-    
-    AAIButton = tk.Button(buttonsContainer, text="AAI", font=subtextFont, width=12, pady=3)
+
+    AAIButton = tk.Button(buttonsContainer, text="AAI", font=subtextFont, width=12, pady=3, command=lambda: settingsPage("AAI",currentUser["AAI"]))
     AAIButton.grid(row=1, column=1, padx=10, pady=5)
 
     # Device detection section
@@ -265,6 +282,120 @@ def homePage():
     # logout section
     logoutButton = tk.Button(homePage, text ="Logout", font=subtextFont, command=startPage, padx=40, pady=3)
     logoutButton.pack(side="bottom", anchor="se", padx=5, pady=5)
+
+
+#Function for editing pacing modes
+def settingsPage(mode_name, settings): 
+    settingsPage = redirectPage()
+
+    title = tk.Label(settingsPage, text=f"Pacemaker Settings - {mode_name}", font=titleFont, bg="mediumpurple", height=2)
+    title.pack(fill=tk.BOTH)
+
+    # Create sliders and labels for the pacing settings
+    # Create a custom slider for LRL
+    def set_lrl_value(value):
+        value = int(round(float(value)))  # Convert to float, round, and then convert to an integer
+        if value < 50:
+            lrl_slider.set(round(value / 5) * 5)  # Round down to the nearest 5
+        elif 50 <= value < 90:
+            lrl_slider.set(round(value))  # Round to the nearest whole number
+        elif 90 <= value <= 175:
+            lrl_slider.set(round((value - 90) / 5) * 5 + 90) 
+
+    lrl_slider = ttk.Scale(settingsPage, from_=30, to=175, length=200, orient="horizontal", value=settings["LRL"], command=set_lrl_value)
+    url_slider = ttk.Scale(settingsPage, from_=50, to=175, length=200, orient="horizontal", value=settings["URL"])
+    aa_slider = ttk.Scale(settingsPage, from_=0, to=3.2, length=200, orient="horizontal", value=settings["AA"])
+    apw_slider = ttk.Scale(settingsPage, from_=0.05, to=1.9, length=200, orient="horizontal", values=settings["APW"])
+    arp_slider = ttk.Scale(settingsPage, from_=150, to=500, length=200, orient="horizontal", value=settings["ARP"])
+    as_slider = ttk.Scale(settingsPage, from_=0.25, to=10, length=200, orient="horizontal", value=settings["AS"])
+    pvarp_slider = ttk.Scale(settingsPage, from_=150, to=500, length=200, orient="horizontal", value=settings["PVARP"])
+
+    # Create labels for the sliders
+    lrl_label = tk.Label(settingsPage, text=f"LRL: {lrl_slider.get()} ppm")
+    url_label = tk.Label(settingsPage, text=f"URL: {url_slider.get()} ppm")
+    aa_label = tk.Label(settingsPage, text=f"AA: {aa_slider.get()} V")
+    apw_label = tk.Label(settingsPage, text=f"APW: {apw_slider.get()} ms")
+    arp_label = tk.Label(settingsPage, text=f"ARP: {arp_slider.get()} ms")
+    as_label = tk.Label(settingsPage, text=f"AS: {as_slider.get()} mV")
+    pvarp_label = tk.Label(settingsPage, text=f"PVARP: {pvarp_slider.get()} ms")
+
+    # Function to update the labels based on slider values
+    # Function to update the label when the slider is moved
+    def update_lrl_label(value):
+        lrl_label.config(text=f"LRL: {int(value)} ppm")
+
+    def update_labels():
+        #lrl_label.config(text=f"LRL: {lrl_slider.get()} ppm")
+        url_label.config(text=f"URL: {url_slider.get()} ppm")
+        aa_label.config(text=f"AA: {aa_slider.get()} V")
+        apw_label.config(text=f"APW: {apw_slider.get()} ms")
+        arp_label.config(text=f"ARP: {arp_slider.get()} ms")
+        as_label.config(text=f"AS: {as_slider.get()} mV")
+        pvarp_label.config(text=f"PVARP: {pvarp_slider.get()} ms")
+
+    # Bind the sliders to update the labels when changed
+    lrl_slider.bind("<Motion>", lambda e: update_lrl_label(lrl_slider.get()))  # Update label while dragging
+    lrl_slider.bind("<ButtonRelease-1>", lambda e: update_lrl_label(lrl_slider.get()))  # Update label on release
+    url_slider.bind("<Motion>", lambda e: update_labels())
+    aa_slider.bind("<Motion>", lambda e: update_labels())
+    apw_slider.bind("<Motion>", lambda e: update_labels())
+    arp_slider.bind("<Motion>", lambda e: update_labels())
+    as_slider.bind("<Motion>", lambda e: update_labels())
+    pvarp_slider.bind("<Motion>", lambda e: update_labels())
+
+    # Create a button to save settings
+    save_button = ttk.Button(settingsPage, text="Save Settings", command=lambda: save_settings(mode_name))
+    save_button.pack()
+
+    # Create a button to go back to the home page
+    backButton = tk.Button(settingsPage, text="Back", font=subtextFont, command=homePage, padx=40, pady=3)
+    backButton.pack(side="bottom", anchor="sw", padx=5, pady=5)
+
+    # Place the sliders and labels on the page
+    lrl_slider.pack()
+    lrl_label.pack()
+    url_slider.pack()
+    url_label.pack()
+    aa_slider.pack()
+    aa_label.pack()
+    apw_slider.pack()
+    apw_label.pack()
+    arp_slider.pack()
+    arp_label.pack()
+    as_slider.pack()
+    as_label.pack()
+    pvarp_slider.pack()
+    pvarp_label.pack()
+
+    # def save_settings():
+    # # Get the updated values from the sliders
+    # lrl_value = lrl_slider.get()
+    # url_value = url_slider.get()
+    # aa_value = aa_slider.get()
+    # apw_value = apw_slider.get()
+    # arp_value = arp_slider.get()
+    # as_value = as_slider.get()
+    # pvarp_value = pvarp_slider.get()
+    # hyst_value = hyst_var.get()
+    # rate_smoothing_value = rate_smoothing_var.get()
+
+    # # Update the settings dictionary with the new values
+    # settings[mode_name] = {
+    #     "LRL": lrl_value,
+    #     "URL": url_value,
+    #     "AA": aa_value,
+    #     "APW": apw_value,
+    #     "ARP": arp_value,
+    #     "AS": as_value,
+    #     "PVARP": pvarp_value,
+    #     "HYST": hyst_value,
+    #     "RATE_SM": rate_smoothing_value
+    # }
+
+    # # Print the updated settings (you can remove this in your final code)
+    # print(f"Updated {mode_name} settings:")
+    # print(settings[mode_name])
+
 
 
 # Start GUI with start page
