@@ -233,7 +233,7 @@ def homePage():
 
     # Device detection section
     deviceDescription = tk.Label(homePage, text="Connect the device.", font=subtextFont)
-    deviceDescription.pack(pady=20)
+    deviceDescription.pack(pady=(20,10))
 
     # Switches between connecting and disconnecting the device
     def connectDevice():
@@ -247,6 +247,13 @@ def homePage():
 
     connectButton = tk.Button(homePage, text="Connect", font=subtextFont, command=connectDevice, width=12, pady=3)
     connectButton.pack()
+
+    # Egram section
+    egramDescription = tk.Label(homePage, text="Develop egram data.", font=subtextFont)
+    egramDescription.pack(pady=(20,10))
+
+    egramButton = tk.Button(homePage, text="egram", font=subtextFont, width=12, pady=3)
+    egramButton.pack()
 
     # logout section
     logoutButton = tk.Button(homePage, text ="Logout", font=subtextFont, command=startPage, padx=40, pady=3)
