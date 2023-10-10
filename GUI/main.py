@@ -287,55 +287,46 @@ def homePage():
 def settingsPage(mode): 
     settingsPage = redirectPage()
 
+    # Copies values of current mode, to be modified then saved
+    modeValues = currentUser[mode].copy()
+
+    # Title for page
     title = tk.Label(settingsPage, text=f"Pacemaker Settings - {mode}", font=titleFont, bg="mediumpurple", height=2)
     title.pack(fill=tk.BOTH)
 
-    modeValues = currentUser[mode]
+    # LRL label and slider
+    currentValue = modeValues["LRL"]
+    lrlLabel = tk.Label(settingsPage, text=f"LRL: {currentValue} ppm")
+    lrlLabel.pack()
 
-    #because of the odd range of LRL values, this is the solution to have a slider settle on appropriate values
-    LRL_vals = [30,35,40,45,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,95,100,105,110,115,120,125,130,135,140,145,150,155,160,165,170,175]
+    def lrlChange(value):
+        value = float(value)
 
-    def valuecheck(current_value):
-        # Get the current value of the slider
-        #current_value = lrl_slider.get()
-        # Convert the string to a float
-        number_float = float(current_value)
+        if value < 50:
+            roundedValue = round(value / 5) * 5
+        elif 50 <= value < 90:
+            roundedValue = round(value)
+        elif 90 <= value <= 175:
+            roundedValue = round(value / 5) * 5
 
-        # Round the float to the nearest integer
-        rounded_int = round(number_float)
-        current_value = int(rounded_int)
-        current_value = round(current_value)
-    
-        # Find the closest value in LRL_vals
-        closest_value = min(LRL_vals, key=lambda x: abs(x - current_value))
-        
-        # Set the slider value to the closest value
-        lrl_slider.set(closest_value)
+        modeValues["LRL"] = roundedValue
+        lrlLabel.config(text=f"LRL: {roundedValue} ppm")
 
-    # Create sliders and labels for the pacing settings
-    lrl_slider = ttk.Scale(settingsPage, from_=min(LRL_vals), to=max(LRL_vals), length= 200, orient="horizontal", value=modeValues["LRL"], command=valuecheck)
+    lrlSlider = ttk.Scale(settingsPage, from_=30, to=175, length= 200, orient="horizontal", value=modeValues["LRL"], command=lrlChange)
+    lrlSlider.pack()
 
-    # Create labels for the sliders
-    lrl_label = tk.Label(settingsPage, text=f"LRL: {lrl_slider.get()} ppm")
+    # Bottom buttons to save and go back
+    buttonFrame = tk.Frame(settingsPage)
+    buttonFrame.pack(side="bottom", fill="x")
 
+    def saveData():
+        currentUser[mode] = modeValues
 
-    def update_labels(event):
-        lrl_label.config(text=f"LRL: {lrl_slider.get()} ppm")
+    saveButton = tk.Button(buttonFrame, text="Save", font=subtextFont, padx=40, pady=3, command=saveData)
+    saveButton.pack(side="right", padx=5, pady=5)
 
-    # Bind the slider to update the label when value changes
-    lrl_slider.bind("<Motion>", lambda e: update_labels(lrl_slider.get()))
-
-
-    # Create a button to go back to the home page
-    backButton = tk.Button(settingsPage, text="Back", font=subtextFont, command=homePage, padx=40, pady=3)
-    backButton.pack(side="bottom", anchor="sw", padx=5, pady=5)
-
-    # Place the sliders and labels on the page
-    lrl_slider.pack()
-    lrl_label.pack()
-
-    # Set initial label value
-    update_labels(lrl_slider.get())
+    backButton = tk.Button(buttonFrame, text="Back", font=subtextFont, padx=40, pady=3, command=homePage)
+    backButton.pack(side="left", padx=5, pady=5)
 
 # Start GUI with start page
 startPage()
