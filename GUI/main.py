@@ -150,7 +150,14 @@ def registerPage():
                 return
         
         # Add new user if all checks have passed
-        newUser = {"username": username, "password": password}
+        newUser = {
+            "username": username, 
+            "password": password, 
+            "VOO": {"variable": 5, "var": 6}, 
+            "VVI": {}, 
+            "AOO": {}, 
+            "AAI": {}
+        }
         messagebox.showinfo("Registration Successful", username + " has been registered!", parent=box)
         userData.append(newUser)
 
