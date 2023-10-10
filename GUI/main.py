@@ -230,9 +230,7 @@ def existingUsersPage():
 def homePage():
     homePage = redirectPage()
 
-    username = currentUser["username"]
-
-    title = tk.Label(homePage, text=f"Welcome, {username}!", font=titleFont, bg="pink2", height=2)
+    title = tk.Label(homePage, text=f"Welcome, {currentUser['username']}!", font=titleFont, bg="pink2", height=2)
     title.pack(fill=tk.BOTH)
 
     # Pulsing mode section
@@ -295,8 +293,7 @@ def settingsPage(mode):
     title.pack(fill=tk.BOTH)
 
     # LRL label and slider
-    currentValue = modeValues["LRL"]
-    lrlLabel = tk.Label(settingsPage, text=f"LRL: {currentValue} ppm")
+    lrlLabel = tk.Label(settingsPage, text=f"LRL: {modeValues['LRL']} ppm")
     lrlLabel.pack()
 
     def lrlChange(value):
