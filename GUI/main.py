@@ -173,11 +173,6 @@ def existingUsersPage():
     description = tk.Label(existingUsers, text=f"Current Users: {len(userData)}/10. Click on a user to delete.", font=subtextFont)
     description.pack(pady=20)
 
-    buttonsContainer = tk.Frame(existingUsers)
-    buttonsContainer.pack(expand=True, fill=tk.Y)
-    row_num = 0  
-    col_num = 0  
-
     # Prompts user to delete user chosen
     def deleteUser(username):
         for user in userData:
@@ -189,6 +184,11 @@ def existingUsersPage():
         if result == "yes":
             existingUsersPage()
             messagebox.showinfo("Deletion Successful", username + " has been deleted!", parent=box)
+
+    buttonsContainer = tk.Frame(existingUsers)
+    buttonsContainer.pack(fill=tk.Y)
+    row_num = 0  
+    col_num = 0  
     
     # Goes through userData and creates a button for each user
     for user in userData:
@@ -212,6 +212,36 @@ def homePage():
     title = tk.Label(homePage, text=f"Welcome, {username}!", font=titleFont, bg="pink2", height=2)
     title.pack(fill=tk.BOTH)
 
+    # Pulsing mode section
+    modeDescription = tk.Label(homePage, text="Select a pacing mode.", font=subtextFont)
+    modeDescription.pack(pady=20)
+
+    buttonsContainer = tk.Frame(homePage)
+    buttonsContainer.pack(fill=tk.Y)
+
+    VOOButton = tk.Button(buttonsContainer, text="VOO", font=subtextFont, width=12, pady=3)
+    VOOButton.grid(row=0, column=0, padx=10, pady=5)
+    
+    VVIButton = tk.Button(buttonsContainer, text="VVI", font=subtextFont, width=12, pady=3)
+    VVIButton.grid(row=0, column=1, padx=10, pady=5)
+    
+    AOOButton = tk.Button(buttonsContainer, text="AOO", font=subtextFont, width=12, pady=3)
+    AOOButton.grid(row=1, column=0, padx=10, pady=5)
+    
+    AAIButton = tk.Button(buttonsContainer, text="AAI", font=subtextFont, width=12, pady=3)
+    AAIButton.grid(row=1, column=1, padx=10, pady=5)
+
+    # Device detection section
+    deviceDescription = tk.Label(homePage, text="Connect the device.", font=subtextFont)
+    deviceDescription.pack(pady=20)
+
+    def connectDevice():
+        status = connectButton.cget("text")
+
+    connectButton = tk.Button(homePage, text="Connect", font=subtextFont, width=12, pady=3)
+    connectButton.pack()
+
+    # logout section
     logoutButton = tk.Button(homePage, text ="Logout", font=subtextFont, command=startPage, padx=40, pady=3)
     logoutButton.pack(side="bottom", anchor="se", padx=5, pady=5)
 
