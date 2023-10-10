@@ -235,10 +235,17 @@ def homePage():
     deviceDescription = tk.Label(homePage, text="Connect the device.", font=subtextFont)
     deviceDescription.pack(pady=20)
 
+    # Switches between connecting and disconnecting the device
     def connectDevice():
         status = connectButton.cget("text")
+        if status == "Connect":
+            status = "Disconnect"
+        else:
+            status = "Connect"
 
-    connectButton = tk.Button(homePage, text="Connect", font=subtextFont, width=12, pady=3)
+        connectButton.configure(text=status)
+
+    connectButton = tk.Button(homePage, text="Connect", font=subtextFont, command=connectDevice, width=12, pady=3)
     connectButton.pack()
 
     # logout section
