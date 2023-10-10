@@ -290,58 +290,41 @@ def settingsPage(mode):
     title = tk.Label(settingsPage, text=f"Pacemaker Settings - {mode}", font=titleFont, bg="mediumpurple", height=2)
     title.pack(fill=tk.BOTH)
 
-    # Create a custom slider for LRL
-    def set_lrl_value(value):
-        value = int(round(float(value)))  # Convert to float, round, and then convert to an integer
-        if value < 50:
-            lrl_slider.set(round(value / 5) * 5)  # Round down to the nearest 5
-        elif 50 <= value < 90:
-            lrl_slider.set(round(value))  # Round to the nearest whole number
-        elif 90 <= value <= 175:
-            lrl_slider.set(round((value - 90) / 5) * 5 + 90) 
-
     modeValues = currentUser[mode]
+
+    #because of the odd range of LRL values, this is the solution to have a slider settle on appropriate values
+    LRL_vals = [30,35,40,45,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,95,100,105,110,115,120,125,130,135,140,145,150,155,160,165,170,175]
+
+    def valuecheck(current_value):
+        # Get the current value of the slider
+        #current_value = lrl_slider.get()
+        # Convert the string to a float
+        number_float = float(current_value)
+
+        # Round the float to the nearest integer
+        rounded_int = round(number_float)
+        current_value = int(rounded_int)
+        current_value = round(current_value)
+    
+        # Find the closest value in LRL_vals
+        closest_value = min(LRL_vals, key=lambda x: abs(x - current_value))
+        
+        # Set the slider value to the closest value
+        lrl_slider.set(closest_value)
+
     # Create sliders and labels for the pacing settings
-    lrl_slider = ttk.Scale(settingsPage, from_=30, to=175, length=200, orient="horizontal", value=modeValues["LRL"], command=set_lrl_value)
-    url_slider = ttk.Scale(settingsPage, from_=50, to=175, length=200, orient="horizontal", value=modeValues["URL"])
-    aa_slider = ttk.Scale(settingsPage, from_=0, to=3.2, length=200, orient="horizontal", value=modeValues["AA"])
-    apw_slider = ttk.Scale(settingsPage, from_=0.05, to=1.9, length=200, orient="horizontal", value=modeValues["APW"])
-    arp_slider = ttk.Scale(settingsPage, from_=150, to=500, length=200, orient="horizontal", value=modeValues["ARP"])
-    as_slider = ttk.Scale(settingsPage, from_=0.25, to=10, length=200, orient="horizontal", value=modeValues["AS"])
-    pvarp_slider = ttk.Scale(settingsPage, from_=150, to=500, length=200, orient="horizontal", value=modeValues["PVARP"])
+    lrl_slider = ttk.Scale(settingsPage, from_=min(LRL_vals), to=max(LRL_vals), length= 200, orient="horizontal", value=modeValues["LRL"], command=valuecheck)
 
     # Create labels for the sliders
     lrl_label = tk.Label(settingsPage, text=f"LRL: {lrl_slider.get()} ppm")
-    url_label = tk.Label(settingsPage, text=f"URL: {url_slider.get()} ppm")
-    aa_label = tk.Label(settingsPage, text=f"AA: {aa_slider.get()} V")
-    apw_label = tk.Label(settingsPage, text=f"APW: {apw_slider.get()} ms")
-    arp_label = tk.Label(settingsPage, text=f"ARP: {arp_slider.get()} ms")
-    as_label = tk.Label(settingsPage, text=f"AS: {as_slider.get()} mV")
-    pvarp_label = tk.Label(settingsPage, text=f"PVARP: {pvarp_slider.get()} ms")
 
-    # Function to update the labels based on slider values
-    # Function to update the label when the slider is moved
-    def update_lrl_label(value):
-        lrl_label.config(text=f"LRL: {int(value)} ppm")
 
-    def update_labels():
-        #lrl_label.config(text=f"LRL: {lrl_slider.get()} ppm")
-        url_label.config(text=f"URL: {url_slider.get()} ppm")
-        aa_label.config(text=f"AA: {aa_slider.get()} V")
-        apw_label.config(text=f"APW: {apw_slider.get()} ms")
-        arp_label.config(text=f"ARP: {arp_slider.get()} ms")
-        as_label.config(text=f"AS: {as_slider.get()} mV")
-        pvarp_label.config(text=f"PVARP: {pvarp_slider.get()} ms")
+    def update_labels(event):
+        lrl_label.config(text=f"LRL: {lrl_slider.get()} ppm")
 
-    # Bind the sliders to update the labels when changed
-    lrl_slider.bind("<Motion>", lambda e: update_lrl_label(lrl_slider.get()))  # Update label while dragging
-    lrl_slider.bind("<ButtonRelease-1>", lambda e: update_lrl_label(lrl_slider.get()))  # Update label on release
-    url_slider.bind("<Motion>", lambda e: update_labels())
-    aa_slider.bind("<Motion>", lambda e: update_labels())
-    apw_slider.bind("<Motion>", lambda e: update_labels())
-    arp_slider.bind("<Motion>", lambda e: update_labels())
-    as_slider.bind("<Motion>", lambda e: update_labels())
-    pvarp_slider.bind("<Motion>", lambda e: update_labels())
+    # Bind the slider to update the label when value changes
+    lrl_slider.bind("<Motion>", lambda e: update_labels(lrl_slider.get()))
+
 
     # Create a button to go back to the home page
     backButton = tk.Button(settingsPage, text="Back", font=subtextFont, command=homePage, padx=40, pady=3)
@@ -350,19 +333,9 @@ def settingsPage(mode):
     # Place the sliders and labels on the page
     lrl_slider.pack()
     lrl_label.pack()
-    url_slider.pack()
-    url_label.pack()
-    aa_slider.pack()
-    aa_label.pack()
-    apw_slider.pack()
-    apw_label.pack()
-    arp_slider.pack()
-    arp_label.pack()
-    as_slider.pack()
-    as_label.pack()
-    pvarp_slider.pack()
-    pvarp_label.pack()
 
+    # Set initial label value
+    update_labels(lrl_slider.get())
 
 # Start GUI with start page
 startPage()
