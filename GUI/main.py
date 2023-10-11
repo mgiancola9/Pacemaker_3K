@@ -174,8 +174,13 @@ def registerPage():
             "AAI": {"LRL": LRL_VALUE, "URL": URL_VALUE, "AA": AA_VALUE, "APW": APW_VALUE, "AS": AS_VALUE, "ARP": ARP_VALUE, "PVARP": PVARP_VALUE, "HYST": HYST_VALUE, "RS": RATESM_VALUE},
             "VVI": {"LRL": LRL_VALUE, "URL": URL_VALUE, "VA": VA_VALUE, "VPW": VPW_VALUE, "VS": VS_VALUE, "VRP": VRP_VALUE, "HYST": HYST_VALUE, "RS": RATESM_VALUE}
         }
-        messagebox.showinfo("Registration Successful", username + " has been registered!", parent=box)
+
+        # Add new user to storage and immediately log them in
         userData.append(newUser)
+        global currentUser
+        currentUser = newUser
+        homePage()
+        messagebox.showinfo("Registration Successful", username + " has been registered!", parent=box)
 
     registerButton = tk.Button(registerPage, text ="Register", font=subtextFont, command=registerUser, padx=40, pady=3)
     registerButton.pack() 
