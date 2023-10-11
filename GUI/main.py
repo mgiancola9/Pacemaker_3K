@@ -293,7 +293,7 @@ def settingsPage(mode):
     title.pack(fill=tk.BOTH)
 
     # Functions for slider changes
-    def lrlChange(value):
+    def LRLChange(value):
         value = float(value)
         if value < 50:
             roundedValue = round(value / 5) * 5
@@ -305,6 +305,7 @@ def settingsPage(mode):
         modeValues["LRL"] = roundedValue
         lrlLabel.config(text=f"LRL: {roundedValue} ppm")
 
+    # VPW and APW update when slider changes
     def VAPWChange(value, VorA):
         value = float(value)
         if value <= 0.1:
@@ -318,6 +319,7 @@ def settingsPage(mode):
         elif VorA == "VPW":
             vpwLabel.config(text=f"VPW: {roundedValue} ms")
 
+    # AS and VS update when slider changes
     def AVSensChange(value, VorA):
         value = float(value)
         if 0.25 <= value <= 0.375:
@@ -337,20 +339,8 @@ def settingsPage(mode):
         elif VorA == "VS": 
             vsLabel.config(text=f"VS: {roundedValue} mV")
 
-    def filterfunction(value, increment, type, unit):
-        value = float(value)
-        roundedValue = round(value / increment) * increment
-        modeValues[type] = roundedValue
-        if type == "URL":
-            urlLabel.config(text=f"URL: {roundedValue} {unit}")
-        elif type == "ARP":
-            arpLabel.config(text=f"ARP: {roundedValue} {unit}")
-        elif type == "VRP":
-            vrpLabel.config(text=f"VRP: {roundedValue} {unit}")
-        elif type == "PVARP":
-            pvarpLabel.config(text=f"PVARP: {roundedValue} {unit}")
-
-    def VAampChange(value, VorA):
+    # AA and VA update when slider changes
+    def VAAmpChange(value, VorA):
         value = float(value)
         if value < 0.5:
             roundedValue = 0
@@ -369,18 +359,32 @@ def settingsPage(mode):
         elif VorA == "VA": 
             vaLabel.config(text=f"VA: {roundedValue} V")
 
+    # General function for when slider changes
+    def generalChange(value, increment, type, unit):
+        value = float(value)
+        roundedValue = round(value / increment) * increment
+        modeValues[type] = roundedValue
+        if type == "URL":
+            urlLabel.config(text=f"URL: {roundedValue} {unit}")
+        elif type == "ARP":
+            arpLabel.config(text=f"ARP: {roundedValue} {unit}")
+        elif type == "VRP":
+            vrpLabel.config(text=f"VRP: {roundedValue} {unit}")
+        elif type == "PVARP":
+            pvarpLabel.config(text=f"PVARP: {roundedValue} {unit}")
+
     # LRL slider for all modes
     lrlLabel = tk.Label(settingsPage, text=f"LRL: {modeValues['LRL']} ppm")
     lrlLabel.pack(pady=(10,0))
 
-    lrlSlider = ttk.Scale(settingsPage, from_=30, to=175, length= 200, orient="horizontal", value=modeValues["LRL"], command=lrlChange)
+    lrlSlider = ttk.Scale(settingsPage, from_=30, to=175, length= 200, orient="horizontal", value=modeValues["LRL"], command=LRLChange)
     lrlSlider.pack()
 
     # URL slider for all modes
     urlLabel = tk.Label(settingsPage, text=f"URL: {modeValues['URL']} ppm")
     urlLabel.pack(pady=(10,0))
 
-    urlSlider = ttk.Scale(settingsPage, from_=50, to=175, length=200, orient="horizontal", value=modeValues["URL"], command=lambda value: filterfunction(value, 5, "URL", "ppm"))
+    urlSlider = ttk.Scale(settingsPage, from_=50, to=175, length=200, orient="horizontal", value=modeValues["URL"], command=lambda value: generalChange(value, 5, "URL", "ppm"))
     urlSlider.pack()
 
     # Sliders for AOO and AAI
@@ -388,7 +392,7 @@ def settingsPage(mode):
         aaLabel = tk.Label(settingsPage, text=f"AA: {modeValues['AA']} V")
         aaLabel.pack(pady=(10,0))
 
-        aaSlider = ttk.Scale(settingsPage, from_=0, to=7, length=200, orient="horizontal", value=modeValues["AA"], command=lambda value: VAampChange(value, "AA"))
+        aaSlider = ttk.Scale(settingsPage, from_=0, to=7, length=200, orient="horizontal", value=modeValues["AA"], command=lambda value: VAAmpChange(value, "AA"))
         aaSlider.pack()
 
         apwLabel = tk.Label(settingsPage, text=f"APW: {modeValues['APW']} ms")
@@ -402,7 +406,7 @@ def settingsPage(mode):
         vaLabel = tk.Label(settingsPage, text=f"VA: {modeValues['VA']} V")
         vaLabel.pack(pady=(10,0))
 
-        vaSlider = ttk.Scale(settingsPage, from_=0, to= 7.0, length=200, orient="horizontal", value=modeValues["VA"], command=lambda value: VAampChange(value, "VA"))
+        vaSlider = ttk.Scale(settingsPage, from_=0, to= 7, length=200, orient="horizontal", value=modeValues["VA"], command=lambda value: VAAmpChange(value, "VA"))
         vaSlider.pack()
 
         vpwLabel = tk.Label(settingsPage, text=f"VPW: {modeValues['VPW']} ms")
@@ -416,7 +420,7 @@ def settingsPage(mode):
         arpLabel = tk.Label(settingsPage, text=f"ARP: {modeValues['ARP']} ms")
         arpLabel.pack(pady=(10,0))
 
-        arpSlider = ttk.Scale(settingsPage, from_=150, to=500, length=200, orient="horizontal", value=modeValues["ARP"], command=lambda value: filterfunction(value, 10, "ARP", "ms"))
+        arpSlider = ttk.Scale(settingsPage, from_=150, to=500, length=200, orient="horizontal", value=modeValues["ARP"], command=lambda value: generalChange(value, 10, "ARP", "ms"))
         arpSlider.pack()
 
         asLabel = tk.Label(settingsPage, text=f"AS: {modeValues['AS']} mV")
@@ -428,7 +432,7 @@ def settingsPage(mode):
         pvarpLabel = tk.Label(settingsPage, text=f"PVARP: {modeValues['PVARP']} ms")
         pvarpLabel.pack(pady=(10,0))
 
-        pvarpSlider = ttk.Scale(settingsPage, from_=150, to=500, length=200, orient="horizontal", value=modeValues["PVARP"], command=lambda value: filterfunction(value, 10, "PVARP", "ms"))
+        pvarpSlider = ttk.Scale(settingsPage, from_=150, to=500, length=200, orient="horizontal", value=modeValues["PVARP"], command=lambda value: generalChange(value, 10, "PVARP", "ms"))
         pvarpSlider.pack()
 
     # Sliders only for VVI
@@ -436,7 +440,7 @@ def settingsPage(mode):
         vrpLabel = tk.Label(settingsPage, text=f"VRP: {modeValues['VRP']} ms")
         vrpLabel.pack(pady=(10,0))
 
-        vrpSlider = ttk.Scale(settingsPage, from_=150, to=500, length=200, orient="horizontal", value=modeValues["VRP"], command=lambda value: filterfunction(value, 10, "VRP", "ms"))
+        vrpSlider = ttk.Scale(settingsPage, from_=150, to=500, length=200, orient="horizontal", value=modeValues["VRP"], command=lambda value: generalChange(value, 10, "VRP", "ms"))
         vrpSlider.pack()
 
         vsLabel = tk.Label(settingsPage, text=f"VS: {modeValues['VS']} mV")
