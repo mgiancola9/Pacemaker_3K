@@ -278,7 +278,7 @@ def homePage():
     egramDescription = tk.Label(homePage, text="Develop egram data.", font=subtextFont)
     egramDescription.pack(pady=(20,10))
 
-    egramButton = tk.Button(homePage, text="egram", font=subtextFont, width=12, pady=3)
+    egramButton = tk.Button(homePage, text="egram", font=subtextFont, command=egramPage, width=12, pady=3)
     egramButton.pack()
 
     # logout section
@@ -494,6 +494,12 @@ def settingsPage(mode):
 
     backButton = tk.Button(buttonFrame, text="Back", font=subtextFont, padx=40, pady=3, command=homePage)
     backButton.pack(side="left", padx=5, pady=5)
+
+def egramPage():
+    egramPage = redirectPage()
+
+    backButton = tk.Button(egramPage, text ="Back", font=subtextFont, command=homePage, padx=40, pady=3)
+    backButton.pack(side="bottom", anchor="sw", padx=5, pady=5)
 
 # Start GUI with start page
 startPage()
