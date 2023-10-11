@@ -495,6 +495,7 @@ def settingsPage(mode):
     backButton = tk.Button(buttonFrame, text="Back", font=subtextFont, padx=40, pady=3, command=homePage)
     backButton.pack(side="left", padx=5, pady=5)
 
+# Page to display egram graph
 def egramPage():
     egramPage = redirectPage()
 
