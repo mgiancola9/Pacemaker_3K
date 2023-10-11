@@ -172,7 +172,7 @@ def registerPage():
             "AOO": {"LRL": LRL_VALUE, "URL": URL_VALUE, "AA": AA_VALUE, "APW": APW_VALUE},
             "VOO": {"LRL": LRL_VALUE, "URL": URL_VALUE, "VA": VA_VALUE, "VPW": VPW_VALUE}, 
             "AAI": {"LRL": LRL_VALUE, "URL": URL_VALUE, "AA": AA_VALUE, "APW": APW_VALUE, "AS": AS_VALUE, "ARP": ARP_VALUE, "PVARP": PVARP_VALUE, "HYST": HYST_VALUE, "RATE_SM": RATESM_VALUE},
-            "VVI": {"LRL": LRL_VALUE, "URL": URL_VALUE, "AA": AA_VALUE, "APW": APW_VALUE, "VS": VS_VALUE, "VRP": VRP_VALUE, "HYST": HYST_VALUE, "RATE_SM": RATESM_VALUE}
+            "VVI": {"LRL": LRL_VALUE, "URL": URL_VALUE, "VA": VA_VALUE, "VPW": VPW_VALUE, "VS": VS_VALUE, "VRP": VRP_VALUE, "HYST": HYST_VALUE, "RATE_SM": RATESM_VALUE}
         }
         messagebox.showinfo("Registration Successful", username + " has been registered!", parent=box)
         userData.append(newUser)
@@ -281,7 +281,7 @@ def homePage():
     logoutButton.pack(side="bottom", anchor="se", padx=5, pady=5)
 
 
-#Function for editing pacing modes
+# Pacing mode pages
 def settingsPage(mode): 
     settingsPage = redirectPage()
 
@@ -292,7 +292,7 @@ def settingsPage(mode):
     title = tk.Label(settingsPage, text=f"Pacemaker Settings - {mode}", font=titleFont, bg="mediumpurple", height=2)
     title.pack(fill=tk.BOTH)
 
-    # Functions
+    # Functions for slider changes
     def lrlChange(value):
         value = float(value)
         if value < 50:
@@ -307,68 +307,88 @@ def settingsPage(mode):
 
     def VAPWChange(value, VorA):
         value = float(value)
-        if value < 0.1:
+        if value <= 0.1:
             roundedValue = 0.05
-        elif value < 1.9:
-            roundedValue = round(value / 0.1) * 0.1
+        elif value <= 1.9:
+            roundedValue = round(round(value / 0.1) * 0.1,1)
 
         modeValues[VorA] = roundedValue
         if VorA == "APW":
-            apwLabel.config(text=f"{VorA}: {roundedValue} ms")
+            apwLabel.config(text=f"APW: {roundedValue} ms")
+        elif VorA == "VPW":
+            vpwLabel.config(text=f"VPW: {roundedValue} ms")
 
     def AVSensChange(value, VorA):
         value = float(value)
-        if 0.25 < value < 0.375:
+        if 0.25 <= value <= 0.375:
             roundedValue = 0.25
-        elif value < 0.625:
+        elif value <= 0.625:
             roundedValue = 0.5
-        elif value < 0.875: 
+        elif value <= 0.875: 
             roundedValue = 0.75
-        elif value < 1:
+        elif value <= 1:
             roundedValue = 1.0
-        elif value < 10:
+        elif value <= 10:
             roundedValue = round(value / 0.5) * 0.5
         
         modeValues[VorA] = roundedValue
         if VorA == "AS":
-            asLabel.config(text=f"{VorA}: {roundedValue} mV")
-        else: 
-            vsLabel.config(text=f"{VorA}: {roundedValue} mV")
+            asLabel.config(text=f"AS: {roundedValue} mV")
+        elif VorA == "VS": 
+            vsLabel.config(text=f"VS: {roundedValue} mV")
 
-    #this function takes passsed through 
     def filterfunction(value, increment, type, unit):
         value = float(value)
         roundedValue = round(value / increment) * increment
         modeValues[type] = roundedValue
         if type == "URL":
-            urlLabel.config(text=f"{type}: {roundedValue} {unit}")
+            urlLabel.config(text=f"URL: {roundedValue} {unit}")
         elif type == "ARP":
-            arpLabel.config(text=f"{type}: {roundedValue} {unit}")
+            arpLabel.config(text=f"ARP: {roundedValue} {unit}")
         elif type == "VRP":
-            arpLabel.config(text=f"{type}: {roundedValue} {unit}")
-        elif type == "VPARP":
-            pvarpLabel.config(text=f"{type}: {roundedValue} {unit}")
+            vrpLabel.config(text=f"VRP: {roundedValue} {unit}")
+        elif type == "PVARP":
+            pvarpLabel.config(text=f"PVARP: {roundedValue} {unit}")
 
-    # LRL slider
+    def VAampChange(value, VorA):
+        value = float(value)
+        if value < 0.5:
+            roundedValue = 0
+        elif value < 3.2:
+            roundedValue = round(round(value / 0.1)  * 0.1,1)
+        elif value < 3.35:
+            roundedValue = 3.2
+        elif value < 3.5:
+            roundedValue = 3.5
+        elif value <= 7:
+            roundedValue = round(value / 0.5, 1) * 0.5
+
+        modeValues[VorA] = roundedValue
+        if VorA == "AA":
+            aaLabel.config(text=f"AA: {roundedValue} V")
+        elif VorA == "VA": 
+            vaLabel.config(text=f"VA: {roundedValue} V")
+
+    # LRL slider for all modes
     lrlLabel = tk.Label(settingsPage, text=f"LRL: {modeValues['LRL']} ppm")
     lrlLabel.pack(pady=(10,0))
 
     lrlSlider = ttk.Scale(settingsPage, from_=30, to=175, length= 200, orient="horizontal", value=modeValues["LRL"], command=lrlChange)
     lrlSlider.pack()
 
-    # URL slider
+    # URL slider for all modes
     urlLabel = tk.Label(settingsPage, text=f"URL: {modeValues['URL']} ppm")
     urlLabel.pack(pady=(10,0))
 
     urlSlider = ttk.Scale(settingsPage, from_=50, to=175, length=200, orient="horizontal", value=modeValues["URL"], command=lambda value: filterfunction(value, 5, "URL", "ppm"))
     urlSlider.pack()
 
-    #mode specific sliders
+    # Sliders for AOO and AAI
     if mode == "AOO" or mode == "AAI":
         aaLabel = tk.Label(settingsPage, text=f"AA: {modeValues['AA']} V")
         aaLabel.pack(pady=(10,0))
 
-        aaSlider = ttk.Scale(settingsPage, from_=0, to= 7.0, length=200, orient="horizontal", value=modeValues["AA"], command=lambda value: VAampChange(value, "AA"))
+        aaSlider = ttk.Scale(settingsPage, from_=0, to=7, length=200, orient="horizontal", value=modeValues["AA"], command=lambda value: VAampChange(value, "AA"))
         aaSlider.pack()
 
         apwLabel = tk.Label(settingsPage, text=f"APW: {modeValues['APW']} ms")
@@ -377,7 +397,8 @@ def settingsPage(mode):
         apwSlider = ttk.Scale(settingsPage, from_=0.05, to=1.9, length=200, orient="horizontal", value=modeValues["APW"], command=lambda value: VAPWChange(value, "APW"))
         apwSlider.pack()
 
-    elif mode == "VOO" or mode == "VII":
+    # Sliders for VOO and VII
+    elif mode == "VOO" or mode == "VVI":
         vaLabel = tk.Label(settingsPage, text=f"VA: {modeValues['VA']} V")
         vaLabel.pack(pady=(10,0))
 
@@ -390,6 +411,7 @@ def settingsPage(mode):
         vpwSlider = ttk.Scale(settingsPage, from_=0.05, to=1.9, length=200, orient="horizontal", value=modeValues["VPW"], command=lambda value: VAPWChange(value, "VPW"))
         vpwSlider.pack()
 
+    # Sliders only for AAI
     if mode == "AAI":
         arpLabel = tk.Label(settingsPage, text=f"ARP: {modeValues['ARP']} ms")
         arpLabel.pack(pady=(10,0))
@@ -409,6 +431,7 @@ def settingsPage(mode):
         pvarpSlider = ttk.Scale(settingsPage, from_=150, to=500, length=200, orient="horizontal", value=modeValues["PVARP"], command=lambda value: filterfunction(value, 10, "PVARP", "ms"))
         pvarpSlider.pack()
 
+    # Sliders only for VVI
     elif mode == "VVI":
         vrpLabel = tk.Label(settingsPage, text=f"VRP: {modeValues['VRP']} ms")
         vrpLabel.pack(pady=(10,0))
@@ -422,32 +445,13 @@ def settingsPage(mode):
         vsSlider = ttk.Scale(settingsPage, from_=0.25, to=10, length=200, orient="horizontal", value=modeValues["VS"],command=lambda value: AVSensChange(value, "VS"))
         vsSlider.pack()
 
-    #function for V or A amplitude rounding
-    def VAampChange(value, VorA):
-        value = float(value)
-        if value < 0.5:
-            roundedValue = 0
-        elif value < 3.2:
-            roundedValue = round(value /0.1)  * 0.1
-        elif value < 3.35:
-            roundedValue = 3.2
-        elif value < 3.5:
-            roundedValue = 3.5
-        elif value <= 7:
-            roundedValue = round(value / 0.5) * 0.5
-
-        modeValues[VorA] = roundedValue
-        if VorA == "AA":
-            aaLabel.config(text=f"{VorA}: {roundedValue} V")
-        else: 
-            vaLabel.config(text=f"{VorA}: {roundedValue} V")
-
     # Bottom buttons to save and go back
     buttonFrame = tk.Frame(settingsPage)
     buttonFrame.pack(side="bottom", fill="x")
 
     def saveData():
         currentUser[mode] = modeValues
+        messagebox.showinfo("Save Successful", "Settings have been saved!", parent=box)
 
     saveButton = tk.Button(buttonFrame, text="Save", font=subtextFont, padx=40, pady=3, command=saveData)
     saveButton.pack(side="right", padx=5, pady=5)
