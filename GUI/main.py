@@ -171,8 +171,8 @@ def registerPage():
             "password": password, 
             "AOO": {"LRL": LRL_VALUE, "URL": URL_VALUE, "AA": AA_VALUE, "APW": APW_VALUE},
             "VOO": {"LRL": LRL_VALUE, "URL": URL_VALUE, "VA": VA_VALUE, "VPW": VPW_VALUE}, 
-            "AAI": {"LRL": LRL_VALUE, "URL": URL_VALUE, "AA": AA_VALUE, "APW": APW_VALUE, "AS": AS_VALUE, "ARP": ARP_VALUE, "PVARP": PVARP_VALUE, "HYST": HYST_VALUE, "RATE_SM": RATESM_VALUE},
-            "VVI": {"LRL": LRL_VALUE, "URL": URL_VALUE, "VA": VA_VALUE, "VPW": VPW_VALUE, "VS": VS_VALUE, "VRP": VRP_VALUE, "HYST": HYST_VALUE, "RATE_SM": RATESM_VALUE}
+            "AAI": {"LRL": LRL_VALUE, "URL": URL_VALUE, "AA": AA_VALUE, "APW": APW_VALUE, "AS": AS_VALUE, "ARP": ARP_VALUE, "PVARP": PVARP_VALUE, "HYST": HYST_VALUE, "RS": RATESM_VALUE},
+            "VVI": {"LRL": LRL_VALUE, "URL": URL_VALUE, "VA": VA_VALUE, "VPW": VPW_VALUE, "VS": VS_VALUE, "VRP": VRP_VALUE, "HYST": HYST_VALUE, "RS": RATESM_VALUE}
         }
         messagebox.showinfo("Registration Successful", username + " has been registered!", parent=box)
         userData.append(newUser)
@@ -378,6 +378,11 @@ def settingsPage(mode):
             vrpLabel.config(text=f"VRP: {roundedValue} {unit}")
         elif type == "PVARP":
             pvarpLabel.config(text=f"PVARP: {roundedValue} {unit}")
+        elif type == "RS":
+            if roundedValue == 24:
+                roundedValue = 25
+                modeValues[type] = roundedValue
+            rsLabel.config(text=f"RS: {roundedValue} {unit}")
 
     # LRL slider for all modes
     lrlLabel = tk.Label(settingsPage, text=f"LRL: {modeValues['LRL']} ppm")
@@ -421,14 +426,6 @@ def settingsPage(mode):
         vpwSlider = ttk.Scale(settingsPage, from_=0.05, to=1.9, length=200, orient="horizontal", value=modeValues["VPW"], command=lambda value: VAPWChange(value, "VPW"))
         vpwSlider.pack()
 
-    #shared VVI and AAI slider
-    if mode == "VVI" or mode == "AAI":
-        hystLabel = tk.Label(settingsPage, text=f"HYST: {modeValues['HYST']} ppm")
-        hystLabel.pack(pady=(10,0))
-
-        hystSlider = ttk.Scale(settingsPage, from_=0, to=175, length=200, orient="horizontal", value=modeValues["HYST"], command=lambda value:LRLHChange(value, "HYST"))
-        hystSlider.pack()
-
     # Sliders only for AAI
     if mode == "AAI":
         arpLabel = tk.Label(settingsPage, text=f"ARP: {modeValues['ARP']} ms")
@@ -462,6 +459,22 @@ def settingsPage(mode):
 
         vsSlider = ttk.Scale(settingsPage, from_=0.25, to=10, length=200, orient="horizontal", value=modeValues["VS"],command=lambda value: AVSensChange(value, "VS"))
         vsSlider.pack()
+
+    #shared VVI and AAI slider
+    if mode == "VVI" or mode == "AAI":
+        #hysterisis slider
+        hystLabel = tk.Label(settingsPage, text=f"HYST: {modeValues['HYST']} ppm")
+        hystLabel.pack(pady=(10,0))
+
+        hystSlider = ttk.Scale(settingsPage, from_=0, to=175, length=200, orient="horizontal", value=modeValues["HYST"], command=lambda value:LRLHChange(value, "HYST"))
+        hystSlider.pack()
+
+        #rate smoothing slider
+        rsLabel = tk.Label(settingsPage, text=f"RS: {modeValues['RS']} %")
+        rsLabel.pack(pady=(10,0))
+
+        rsSlider = ttk.Scale(settingsPage, from_=0, to=25, length=200, orient="horizontal", value=modeValues["RS"], command=lambda value:generalChange(value, 3, "RS", "%"))
+        rsSlider.pack()
 
     # Bottom buttons to save and go back
     buttonFrame = tk.Frame(settingsPage)
