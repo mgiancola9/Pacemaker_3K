@@ -293,24 +293,29 @@ def settingsPage(mode):
     title.pack(fill=tk.BOTH)
 
     # Functions for slider changes
-    def LRLChange(value):
+    def LRLHChange(value, LorH):
         value = float(value)
-        if value < 50:
+        if LorH == "HYST" and value < 30:
+            roundedValue = 0
+        elif 30 < value < 50:
             roundedValue = round(value / 5) * 5
         elif 50 <= value < 90:
             roundedValue = round(value)
         elif 90 <= value <= 175:
             roundedValue = round(value / 5) * 5
 
-        modeValues["LRL"] = roundedValue
-        lrlLabel.config(text=f"LRL: {roundedValue} ppm")
+        modeValues[LorH] = roundedValue
+        if LorH == "LRL":
+            lrlLabel.config(text=f"LRL: {roundedValue} ppm")
+        elif LorH == "HYST":
+            hystLabel.config(text=f"HYST: {roundedValue} ppm")
 
     # VPW and APW update when slider changes
     def VAPWChange(value, VorA):
         value = float(value)
         if value <= 0.1:
             roundedValue = 0.05
-        elif value <= 1.9:
+        elif value <= 1.9: #extra round to keep out fp rounding errors 
             roundedValue = round(round(value / 0.1) * 0.1,1)
 
         modeValues[VorA] = roundedValue
@@ -359,6 +364,7 @@ def settingsPage(mode):
         elif VorA == "VA": 
             vaLabel.config(text=f"VA: {roundedValue} V")
 
+
     # General function for when slider changes
     def generalChange(value, increment, type, unit):
         value = float(value)
@@ -377,7 +383,7 @@ def settingsPage(mode):
     lrlLabel = tk.Label(settingsPage, text=f"LRL: {modeValues['LRL']} ppm")
     lrlLabel.pack(pady=(10,0))
 
-    lrlSlider = ttk.Scale(settingsPage, from_=30, to=175, length= 200, orient="horizontal", value=modeValues["LRL"], command=LRLChange)
+    lrlSlider = ttk.Scale(settingsPage, from_=30, to=175, length= 200, orient="horizontal", value=modeValues["LRL"], command=lambda value:LRLHChange(value, "LRL"))
     lrlSlider.pack()
 
     # URL slider for all modes
@@ -414,6 +420,14 @@ def settingsPage(mode):
 
         vpwSlider = ttk.Scale(settingsPage, from_=0.05, to=1.9, length=200, orient="horizontal", value=modeValues["VPW"], command=lambda value: VAPWChange(value, "VPW"))
         vpwSlider.pack()
+
+    #shared VVI and AAI slider
+    if mode == "VVI" or mode == "AAI":
+        hystLabel = tk.Label(settingsPage, text=f"HYST: {modeValues['HYST']} ppm")
+        hystLabel.pack(pady=(10,0))
+
+        hystSlider = ttk.Scale(settingsPage, from_=0, to=175, length=200, orient="horizontal", value=modeValues["HYST"], command=lambda value:LRLHChange(value, "HYST"))
+        hystSlider.pack()
 
     # Sliders only for AAI
     if mode == "AAI":
