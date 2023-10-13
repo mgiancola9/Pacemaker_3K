@@ -505,6 +505,13 @@ def settingsPage(mode):
     backButton = tk.Button(buttonFrame, text="Back", font=subtextFont, padx=40, pady=3, command=homePage)
     backButton.pack(side="left", padx=5, pady=5)
 
+    #code for flashing code button
+    def flashCode():
+        messagebox.showinfo("Registration Successful", "Settings have been flashed to Pacemaker!", parent=box)
+
+    registerButton = tk.Button(buttonFrame, text ="Flash to Pacemaker", font=subtextFont, command=flashCode, padx=40, pady=3)
+    registerButton.pack(side = "bottom", padx=5, pady=5) 
+
 # Page to display egram graph
 def egramPage():
     egramPage = redirectPage()
