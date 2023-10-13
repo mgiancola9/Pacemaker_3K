@@ -172,7 +172,8 @@ def registerPage():
             "AOO": {"LRL": LRL_VALUE, "URL": URL_VALUE, "AA": AA_VALUE, "APW": APW_VALUE},
             "VOO": {"LRL": LRL_VALUE, "URL": URL_VALUE, "VA": VA_VALUE, "VPW": VPW_VALUE}, 
             "AAI": {"LRL": LRL_VALUE, "URL": URL_VALUE, "AA": AA_VALUE, "APW": APW_VALUE, "AS": AS_VALUE, "ARP": ARP_VALUE, "PVARP": PVARP_VALUE, "HYST": HYST_VALUE, "RS": RATESM_VALUE},
-            "VVI": {"LRL": LRL_VALUE, "URL": URL_VALUE, "VA": VA_VALUE, "VPW": VPW_VALUE, "VS": VS_VALUE, "VRP": VRP_VALUE, "HYST": HYST_VALUE, "RS": RATESM_VALUE}
+            "VVI": {"LRL": LRL_VALUE, "URL": URL_VALUE, "VA": VA_VALUE, "VPW": VPW_VALUE, "VS": VS_VALUE, "VRP": VRP_VALUE, "HYST": HYST_VALUE, "RS": RATESM_VALUE},
+            "lastDeviceUsed": None
         }
 
         # Add new user to storage and immediately log them in
@@ -265,7 +266,16 @@ def homePage():
     def connectDevice():
         status = connectButton.cget("text")
         if status == "Connect":
-            status = "Disconnect"
+
+            # Checks if new device. If it is, asks the user if they want to connect it or not
+            device = "device-a63145"
+            if (device != currentUser["lastDeviceUsed"]):
+                result = messagebox.askquestion("New Device", f"New device has been detected. Do you want to set it as your primary device?")
+                if result == "yes":
+                    currentUser["lastDeviceUsed"] = device
+                    status = "Disconnect"
+            else:
+                status = "Disconnect"
         else:
             status = "Connect"
 
