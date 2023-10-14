@@ -477,12 +477,12 @@ def settingsPage(mode):
 
     #shared VVI and AAI slider
     if mode == "VVI" or mode == "AAI":
-        #hysterisis slider
-        hystLabel = tk.Label(settingsPage, text=f"HYST: {modeValues['HYST']} ppm")
-        hystLabel.pack(pady=(10,0))
+        # #hysterisis slider
+        # hystLabel = tk.Label(settingsPage, text=f"HYST: {modeValues['HYST']} ppm")
+        # hystLabel.pack(pady=(10,0))
 
-        hystSlider = ttk.Scale(settingsPage, from_=0, to=175, length=200, orient="horizontal", value=modeValues["HYST"], command=lambda value:LRLHChange(value, "HYST"))
-        hystSlider.pack()
+        # hystSlider = ttk.Scale(settingsPage, from_=0, to=175, length=200, orient="horizontal", value=modeValues["HYST"], command=lambda value:LRLHChange(value, "HYST"))
+        # hystSlider.pack()
 
         #rate smoothing slider
         rsLabel = tk.Label(settingsPage, text=f"RS: {modeValues['RS']} %")
