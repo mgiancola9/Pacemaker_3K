@@ -322,8 +322,8 @@ def settingsPage(mode):
         modeValues[LorH] = roundedValue
         if LorH == "LRL":
             lrlLabel.config(text=f"LRL: {roundedValue} ppm")
-        elif LorH == "HYST":
-            hystLabel.config(text=f"HYST: {roundedValue} ppm")
+        # elif LorH == "HYST":
+        #     hystLabel.config(text=f"HYST: {roundedValue} ppm")
 
     # VPW and APW update when slider changes
     def VAPWChange(value, VorA):
