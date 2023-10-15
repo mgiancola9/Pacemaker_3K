@@ -310,9 +310,9 @@ def settingsPage(mode):
     # Functions for slider changes
     def LRLHChange(value, LorH):
         value = float(value)
-        if LorH == "HYST" and value < 30:
-            roundedValue = 0
-        elif 30 < value < 50:
+        # if LorH == "HYST" and value < 30:
+        #     roundedValue = 0
+        if 30 < value < 50:
             roundedValue = round(value / 5) * 5
         elif 50 <= value < 90:
             roundedValue = round(value)
