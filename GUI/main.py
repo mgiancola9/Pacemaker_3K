@@ -20,7 +20,7 @@ RATESM_VALUE = 0
 
 # Loads currently saved user data
 try:
-    with open("./GUI/userData.json", "r") as file:
+    with open("./userData.json", "r") as file:
         userData = json.load(file)
 except FileNotFoundError:
     userData = []
@@ -30,7 +30,7 @@ currentUser = None
 
 # Saves new user data to json after interface is closed
 def saveUserData():
-    with open('./GUI/userData.json', 'w') as file:
+    with open('./userData.json', 'w') as file:
         json.dump(userData, file)
     box.destroy()
 
