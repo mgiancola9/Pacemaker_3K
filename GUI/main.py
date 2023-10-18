@@ -160,13 +160,8 @@ class PacemakerGUI:
                 return
             
             # Check for spaces in username
-            elif " " in username:
-                messagebox.showwarning("Registration Error", "Username cannot have spaces!", parent=self.box)
-                return
-
-            # Checks for spaces in password
-            elif " " in password:
-                messagebox.showwarning("Registration Error", "Password cannot have spaces!", parent=self.box)
+            elif " " in username or " " in password:
+                messagebox.showwarning("Registration Error", "Username and/or Password cannot have spaces!", parent=self.box)
                 return
 
             # Check if there are already 10 users registered
