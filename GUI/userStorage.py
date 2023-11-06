@@ -1,5 +1,6 @@
 import json
 
+# Class for all the user storage
 class UserStorage:
     def __init__(self):
         # Defining constants for pacing modes based on nominal values
