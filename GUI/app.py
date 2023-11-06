@@ -1,5 +1,6 @@
 import tkinter as tk
 
+# Class to initialize the interface
 class App:
     # Defines all initial values/protocols for the pages
     def __init__(self, userStorage):
@@ -21,3 +22,16 @@ class App:
     def run(self):
         self.box.protocol("WM_DELETE_WINDOW", self.deleteBox)
         self.box.mainloop()
+
+    # Clears the current page, and redirects to the new one
+    def redirectPage(self):
+        # Goes through each active frame and deletes components in frame before deleting itself
+        for frame in self.box.winfo_children():
+            for widget in frame.winfo_children():
+                widget.destroy()
+            frame.destroy()
+
+        # Creates new frame for the current page
+        newPage = tk.Frame(self.box)
+        newPage.pack(fill=tk.BOTH, expand=True)
+        return newPage

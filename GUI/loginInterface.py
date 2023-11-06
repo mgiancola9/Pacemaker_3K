@@ -22,22 +22,9 @@ class LoginInterface:
         self.pacemakerInterface = PacemakerInterface(app, app.box, self, userStorage)
         self.startPage()
 
-    # Clears the current page, and redirects to the new one
-    def redirectPage(self):
-        # Goes through each active frame and deletes components in frame before deleting itself
-        for frame in self.box.winfo_children():
-            for widget in frame.winfo_children():
-                widget.destroy()
-            frame.destroy()
-
-        # Creates new frame for the current page
-        newPage = tk.Frame(self.box)
-        newPage.pack(fill=tk.BOTH, expand=True)
-        return newPage
-
     # Start page
     def startPage(self):
-        startPage = self.redirectPage()
+        startPage = self.app.redirectPage()
 
         title = tk.Label(startPage, text="Welcome to the PULSEMASTER Interface", font=self.titleFont, bg="lightblue", height=2)
         title.pack(fill=tk.BOTH)
@@ -79,7 +66,7 @@ class LoginInterface:
             elif not userFound:
                 messagebox.showwarning("Login Error", "Username does not exist. Please register first.", parent=self.box)
 
-        loginPage = self.redirectPage()
+        loginPage = self.app.redirectPage()
 
         title = tk.Label(loginPage, text="Login to Existing Patient", font=self.titleFont, bg="sienna1", height=2)
         title.pack(fill=tk.BOTH)
@@ -102,7 +89,7 @@ class LoginInterface:
 
     # Register page
     def registerPage(self):
-        registerPage = self.redirectPage()
+        registerPage = self.app.redirectPage()
 
         title = tk.Label(registerPage, text="Register New Patient", font=self.titleFont, bg="lightgreen", height=2)
         title.pack(fill=tk.BOTH)
@@ -165,7 +152,7 @@ class LoginInterface:
 
     # Existing users page
     def existingUsersPage(self):
-        existingUsers = self.redirectPage()
+        existingUsers = self.app.redirectPage()
 
         title = tk.Label(existingUsers, text="Existing Users", font=self.titleFont, bg="mediumpurple", height=2)
         title.pack(fill=tk.BOTH)

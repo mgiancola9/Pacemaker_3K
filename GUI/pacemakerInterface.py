@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
 
+# Class for all pacemaker modifications
 class PacemakerInterface:
     # Defines all initial values/protocols for the pages
     def __init__(self, app, box, loginInterface, userStorage):
@@ -20,22 +21,9 @@ class PacemakerInterface:
         self.loginInterface = loginInterface
         self.userStorage = userStorage
 
-    # Clears the current page, and redirects to the new one
-    def redirectPage(self):
-        # Goes through each active frame and deletes components in frame before deleting itself
-        for frame in self.box.winfo_children():
-            for widget in frame.winfo_children():
-                widget.destroy()
-            frame.destroy()
-
-        # Creates new frame for the current page
-        newPage = tk.Frame(self.box)
-        newPage.pack(fill=tk.BOTH, expand=True)
-        return newPage
-
     # Home page when user is logged in
     def homePage(self, currentUser = None):
-        homePage = self.redirectPage()
+        homePage = self.app.redirectPage()
         if currentUser:
             self.currentUser = currentUser
 
@@ -100,7 +88,7 @@ class PacemakerInterface:
 
     # Pacing mode pages
     def settingsPage(self, mode):
-        settingsPage = self.redirectPage()
+        settingsPage = self.app.redirectPage()
 
         # Copies values of the current mode, to be modified then saved
         modeValues = self.currentUser[mode].copy()
@@ -330,7 +318,7 @@ class PacemakerInterface:
 
     # Page to display egram graph
     def egramPage(self):
-        egramPage = self.redirectPage()
+        egramPage = self.app.redirectPage()
 
         # Create the egram graph (add code here to create the graph)
 
