@@ -4,13 +4,9 @@ from pacemakerInterface import PacemakerInterface
 
 # Class for all the login and register pages
 class LoginInterface:
-    # Defines all initial values/protocols for the pages
     def __init__(self, app, box, userStorage):
         # Sets up frame to put all components on
         self.box = box
-
-        # Variable to hold the current user logged in
-        self.currentUser = None
 
         # Variables to use for text font
         self.titleFont = ('Helvatical bold', 14)
@@ -57,8 +53,7 @@ class LoginInterface:
             userFound, passwordFound, user = self.userStorage.searchUser(username,password)
 
             if userFound and passwordFound:
-                self.currentUser = user
-                self.pacemakerInterface.homePage(self.currentUser)
+                self.pacemakerInterface.homePage(user)
 
             elif userFound and not passwordFound:
                 messagebox.showwarning("Login Error", "Incorrect password for the username provided.", parent=self.box)
@@ -135,10 +130,9 @@ class LoginInterface:
                 messagebox.showwarning("Registration Error", "Another user already has this username!", parent=self.box)
                 return
 
-            # Add new user and log them in
+            # Log new user in
             newUser = self.userStorage.addNewUser(username,password)
-            self.currentUser = newUser
-            self.pacemakerInterface.homePage(self.currentUser)
+            self.pacemakerInterface.homePage(newUser)
             messagebox.showinfo("Registration Successful", username + " has been registered!", parent=self.box)
 
         registerButton = tk.Button(registerPage, text="Register", font=self.subtextFont, command=registerUser, padx=40, pady=3)

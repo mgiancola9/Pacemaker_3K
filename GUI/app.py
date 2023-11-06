@@ -2,7 +2,6 @@ import tkinter as tk
 
 # Class to initialize the interface
 class App:
-    # Defines all initial values/protocols for the pages
     def __init__(self, userStorage):
         # Sets up GUI frame and size
         self.box = tk.Tk()

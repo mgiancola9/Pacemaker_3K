@@ -4,7 +4,6 @@ from tkinter import ttk
 
 # Class for all pacemaker modifications
 class PacemakerInterface:
-    # Defines all initial values/protocols for the pages
     def __init__(self, app, box, loginInterface, userStorage):
         # Sets up frame to put all components on
         self.box = box
@@ -21,7 +20,7 @@ class PacemakerInterface:
         self.loginInterface = loginInterface
         self.userStorage = userStorage
 
-    # Home page when user is logged in
+    # Home page when user is logged in. Takes currentUser parameter to communicate between loginInterface class
     def homePage(self, currentUser = None):
         homePage = self.app.redirectPage()
         if currentUser:
