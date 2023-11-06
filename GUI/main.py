@@ -3,8 +3,7 @@ from tkinter import messagebox
 from tkinter import ttk
 import json
 
-class PacemakerGUI:
-    # Defines all initial values/protocols for the pages
+class UserStorage:
     def __init__(self):
         # Defining constants for pacing modes based on nominal values
         self.LRL_VALUE = 60
@@ -21,13 +20,93 @@ class PacemakerGUI:
         self.HYST_VALUE = 60
         self.RATESM_VALUE = 0
 
-        # Loads currently saved user data
+        # Reads current storage
+        self.userData = None
+        self.openStorage()
+
+    # Defines all initial values/protocols for the pages
+    def openStorage(self):
         try:
             with open("./userData.json", "r") as file:
                 self.userData = json.load(file)
         except FileNotFoundError:
             self.userData = []
 
+    # Saves new user data to json after interface is closed
+    def saveUserData(self):
+        with open('./userData.json', 'w') as file:
+            json.dump(self.userData, file)
+
+    # Searches if the user exists with the username and password
+    def searchUser(self, username, password):
+        userFound, passwordFound, currentUser = False, False, None
+        for user in self.userData:
+            if user["username"] == username:
+                userFound = True
+                if user["password"] == password:
+                    passwordFound = True
+                    currentUser = user
+                    break
+                else:
+                    passwordFound = False
+                    break
+
+        return userFound, passwordFound, currentUser
+    
+    # Searches if the username already exists
+    def userExists(self, username):
+        for user in self.userData:
+            if user["username"] == username:
+                return True
+            
+        return False
+    
+    # Returns the number of registered users
+    def numUsers(self):
+        return len(self.userData)
+    
+    # Adds a new user to the user storage
+    def addNewUser(self, username, password):
+        newUser = {
+                    "username": username,
+                    "password": password,
+                    "AOO": {"LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "AA": self.AA_VALUE, "APW": self.APW_VALUE},
+                    "VOO": {"LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "VA": self.VA_VALUE, "VPW": self.VPW_VALUE},
+                    "AAI": {"LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "AA": self.AA_VALUE, "APW": self.APW_VALUE, "AS": self.AS_VALUE, "ARP": self.ARP_VALUE, "PVARP": self.PVARP_VALUE, "HYST": self.HYST_VALUE, "RS": self.RATESM_VALUE},
+                    "VVI": {"LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "VA": self.VA_VALUE, "VPW": self.VPW_VALUE, "VS": self.VS_VALUE, "VRP": self.VRP_VALUE, "HYST": self.HYST_VALUE, "RS": self.RATESM_VALUE},
+                    "lastDeviceUsed": None
+                }
+
+        # Adds new user to storage and returns the new user
+        self.userData.append(newUser)
+        return newUser 
+    
+    # Deletes user from storage
+    def deleteUser(self, username):
+        for user in self.userData:
+            if user["username"] == username:
+                self.userData.remove(user)
+                break
+
+    # Provides all users in an array
+    def listUsers(self):
+        users = []
+        for user in self.userData:
+            users.append(user["username"])
+
+        return users
+    
+    # modifies user data as the user sent in 
+    def modifyUserData(self, username, mode, modeValues):
+        for user in self.userData:
+            if user["username"] == username:
+                user[mode] = modeValues
+                return
+
+
+class PacemakerGUI:
+    # Defines all initial values/protocols for the pages
+    def __init__(self):
         # Variable to hold the current user logged in
         self.currentUser = None
 
@@ -41,7 +120,8 @@ class PacemakerGUI:
         self.titleFont = ('Helvatical bold', 14)
         self.subtextFont = ('Helvatical bold', 12, "bold")
 
-        # Starts GUI with starting page
+        # Defines an instance of the user storage and starts GUI with starting page
+        self.userStorage = UserStorage()
         self.startPage()
 
     # Clears the current page, and redirects to the new one
@@ -56,11 +136,10 @@ class PacemakerGUI:
         newPage = tk.Frame(self.box)
         newPage.pack(fill=tk.BOTH, expand=True)
         return newPage
-
-    # Saves new user data to json after interface is closed
-    def saveUserData(self):
-        with open('./userData.json', 'w') as file:
-            json.dump(self.userData, file)
+    
+    # Saves current user data and deletes the interface
+    def deleteBox(self):
+        self.userStorage.saveUserData()
         self.box.destroy()
 
     # Start page
@@ -87,23 +166,24 @@ class PacemakerGUI:
 
             # Check for empty fields
             if username == "" or password == "":
-                messagebox.showwarning("Login Error", "Username and password cannot be empty!", parent=self.box)
+                messagebox.showwarning("Login Error", "Username and/or password cannot be empty!", parent=self.box)
+                return
+            
+            elif " " in username or " " in password:
+                messagebox.showwarning("Registration Error", "Username and/or Password cannot have spaces!", parent=self.box)
                 return
 
             # Check if the user exists and the password is correct
-            user_found = False
-            for user in self.userData:
-                if user["username"] == username:
-                    user_found = True
-                    if user["password"] == password:
-                        self.currentUser = user
-                        self.homePage()
-                        return
-                    else:
-                        messagebox.showwarning("Login Error", "Incorrect password for the username provided.", parent=self.box)
-                        return
+            userFound, passwordFound, user = self.userStorage.searchUser(username,password)
 
-            if not user_found:
+            if userFound and passwordFound:
+                self.currentUser = user
+                self.homePage()
+
+            elif userFound and not passwordFound:
+                messagebox.showwarning("Login Error", "Incorrect password for the username provided.", parent=self.box)
+
+            elif not userFound:
                 messagebox.showwarning("Login Error", "Username does not exist. Please register first.", parent=self.box)
 
         loginPage = self.redirectPage()
@@ -165,30 +245,19 @@ class PacemakerGUI:
                 return
 
             # Check if there are already 10 users registered
-            elif len(self.userData) == 10:
+            elif self.userStorage.numUsers() == 10:
                 messagebox.showwarning("Registration Error", "The maximum number of users has been reached, which is 10. Consider deleting an existing user before attempting to register a new user.", parent=self.box)
                 return
 
             # Check if username already exists
-            for pastUsers in self.userData:
-                if pastUsers["username"] == username:
-                    messagebox.showwarning("Registration Error", "Another user already has this username!", parent=self.box)
-                    return
+            usernameExists = self.userStorage.userExists(username)
+            if usernameExists:
+                messagebox.showwarning("Registration Error", "Another user already has this username!", parent=self.box)
+                return
 
-            # Add a new user if all checks have passed
-            new_user = {
-                "username": username,
-                "password": password,
-                "AOO": {"LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "AA": self.AA_VALUE, "APW": self.APW_VALUE},
-                "VOO": {"LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "VA": self.VA_VALUE, "VPW": self.VPW_VALUE},
-                "AAI": {"LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "AA": self.AA_VALUE, "APW": self.APW_VALUE, "AS": self.AS_VALUE, "ARP": self.ARP_VALUE, "PVARP": self.PVARP_VALUE, "HYST": self.HYST_VALUE, "RS": self.RATESM_VALUE},
-                "VVI": {"LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "VA": self.VA_VALUE, "VPW": self.VPW_VALUE, "VS": self.VS_VALUE, "VRP": self.VRP_VALUE, "HYST": self.HYST_VALUE, "RS": self.RATESM_VALUE},
-                "lastDeviceUsed": None
-            }
-
-            # Add the new user to storage and immediately log them in
-            self.userData.append(new_user)
-            self.currentUser = new_user
+            # Add new user and log them in
+            newUser = self.userStorage.addNewUser(username,password)
+            self.currentUser = newUser
             self.homePage()
             messagebox.showinfo("Registration Successful", username + " has been registered!", parent=self.box)
 
@@ -208,18 +277,14 @@ class PacemakerGUI:
         title = tk.Label(existingUsers, text="Existing Users", font=self.titleFont, bg="mediumpurple", height=2)
         title.pack(fill=tk.BOTH)
 
-        description = tk.Label(existingUsers, text=f"Current Users: {len(self.userData)}/10. Click on a user to delete.", font=self.subtextFont)
+        description = tk.Label(existingUsers, text=f"Current Users: {self.userStorage.numUsers()}/10. Click on a user to delete.", font=self.subtextFont)
         description.pack(pady=20)
 
         # Prompts user to delete the chosen user
         def deleteUser(username):
-            for user in self.userData:
-                if user["username"] == username:
-                    self.userData.remove(user)
-                    break
-
             result = messagebox.askquestion("Delete User", f"Are you sure you want to delete user {username}?")
             if result == "yes":
+                self.userStorage.deleteUser(username)
                 self.existingUsersPage()
                 messagebox.showinfo("Deletion Successful", username + " has been deleted!", parent=self.box)
 
@@ -228,9 +293,10 @@ class PacemakerGUI:
         row_num = 0
         col_num = 0
 
-        # Goes through userData and creates a button for each user
-        for user in self.userData:
-            userButton = tk.Button(buttonsContainer, text=user["username"], font=self.subtextFont, command=lambda name=user["username"]: deleteUser(name), width=12, pady=3)
+        # Creates a button for each user
+        usernames = self.userStorage.listUsers()
+        for username in usernames:
+            userButton = tk.Button(buttonsContainer, text=username, font=self.subtextFont, command=lambda name=username: deleteUser(name), width=12, pady=3)
             userButton.grid(row=row_num, column=col_num, padx=10, pady=5)
 
             # Alternate between columns, and move down rows
@@ -514,11 +580,13 @@ class PacemakerGUI:
         buttonFrame = tk.Frame(settingsPage)
         buttonFrame.pack(side="bottom", fill="x")
 
-        # Save, Back, and Flash to Pacemaker buttons
+        # Copies modified data to the storage and the current user
         def saveData():
+            self.userStorage.modifyUserData(self.currentUser["username"], mode, modeValues)
             self.currentUser[mode] = modeValues
             messagebox.showinfo("Save Successful", "Settings have been saved!", parent=self.box)
 
+        # Save, Back, and Flash to Pacemaker buttons
         saveButton = tk.Button(buttonFrame, text="Save", font=self.subtextFont, padx=40, pady=3, command=saveData)
         saveButton.pack(side="right", padx=5, pady=5)
 
@@ -543,7 +611,7 @@ class PacemakerGUI:
 
     # Function to start the GUI
     def run(self):
-        self.box.protocol("WM_DELETE_WINDOW", self.saveUserData)
+        self.box.protocol("WM_DELETE_WINDOW", self.deleteBox)
         self.box.mainloop()
 
 # Main function
