@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
+from egramInterface import EgramInterface
 
 # Class for all pacemaker modifications
 class PacemakerInterface:
@@ -19,6 +20,7 @@ class PacemakerInterface:
         self.app = app
         self.loginInterface = loginInterface
         self.userStorage = userStorage
+        self.egramInterface = EgramInterface(app,box,self)
 
     # Home page when user is logged in. Takes currentUser parameter to communicate between loginInterface class
     def homePage(self, currentUser = None):
@@ -78,7 +80,7 @@ class PacemakerInterface:
         egramDescription = tk.Label(homePage, text="Develop egram data.", font=self.subtextFont)
         egramDescription.pack(pady=(20, 10))
 
-        egramButton = tk.Button(homePage, text="egram", font=self.subtextFont, command=self.egramPage, width=12, pady=3)
+        egramButton = tk.Button(homePage, text="egram", font=self.subtextFont, command=lambda currentUser=self.currentUser: self.egramInterface.egramPage(currentUser), width=12, pady=3)
         egramButton.pack()
 
         # Logout section
@@ -314,12 +316,3 @@ class PacemakerInterface:
 
         flashButton = tk.Button(buttonFrame, text="Flash to Pacemaker", font=self.subtextFont, command=flashCode, padx=40, pady=3)
         flashButton.pack(side="bottom", padx=5, pady=5)
-
-    # Page to display egram graph
-    def egramPage(self):
-        egramPage = self.app.redirectPage()
-
-        # Create the egram graph (add code here to create the graph)
-
-        backButton = tk.Button(egramPage, text="Back", font=self.subtextFont, command=self.homePage, padx=40, pady=3)
-        backButton.pack(side="bottom", anchor="sw", padx=5, pady=5)
