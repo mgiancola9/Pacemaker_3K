@@ -50,6 +50,19 @@ class PacemakerInterface:
         AAIButton = tk.Button(buttonsContainer, text="AAI", font=self.subtextFont, width=12, pady=3, command=lambda: self.settingsPage("AAI"))
         AAIButton.grid(row=1, column=1, padx=10, pady=5)
 
+        #Assignment 2 added modes:
+        AOORButton = tk.Button(buttonsContainer, text="AOOR", font=self.subtextFont, width=12, pady=3, command=lambda: self.settingsPage("AOOR"))
+        AOORButton.grid(row=2, column=0, padx=10, pady=5)
+
+        AAIRButton = tk.Button(buttonsContainer, text="AAIR", font=self.subtextFont, width=12, pady=3, command=lambda: self.settingsPage("AAIR"))
+        AAIRButton.grid(row=2, column=1, padx=10, pady=5)
+
+        VOORButton = tk.Button(buttonsContainer, text="VOOR", font=self.subtextFont, width=12, pady=3, command=lambda: self.settingsPage("VOOR"))
+        VOORButton.grid(row=3, column=0, padx=10, pady=5)
+
+        VVIRButton = tk.Button(buttonsContainer, text="VVIR", font=self.subtextFont, width=12, pady=3, command=lambda: self.settingsPage("VVIR"))
+        VVIRButton.grid(row=3, column=1, padx=10, pady=5)
+
         # Device detection section
         deviceDescription = tk.Label(homePage, text="Connect the device.", font=self.subtextFont)
         deviceDescription.pack(pady=(20, 10))
