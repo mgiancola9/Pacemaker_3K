@@ -6,10 +6,10 @@ class UserStorage:
         # Defining constants for pacing modes based on nominal values
         self.LRL_VALUE = 60
         self.URL_VALUE = 120
-        self.AA_VALUE = 3.5
-        self.APW_VALUE = 0.4
-        self.VA_VALUE = 3.5
-        self.VPW_VALUE = 0.4
+        self.AA_VALUE = 5 #was 3.5
+        self.APW_VALUE = 1 #was 0.4 (updated)
+        self.VA_VALUE = 5
+        self.VPW_VALUE = 1 #was 0.4 
         self.VRP_VALUE = 320
         self.ARP_VALUE = 250
         self.AS_VALUE = 0.75

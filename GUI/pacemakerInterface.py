@@ -130,12 +130,11 @@ class PacemakerInterface:
             #     hystLabel.config(text=f"HYST: {roundedValue} ppm")
 
         # VPW and APW update when the slider changes
+        # new changes for ass 2: program vals = 1-30ms old was (.1-1.9), incrememt by 1ms old was .1 (no 0.05 now), nominal = 1ms was 0.4
         def VAPWChange(value, VorA):
             value = float(value)
-            if value <= 0.1:
-                roundedValue = 0.05
-            elif value <= 1.9:  # extra round to keep out fp rounding errors
-                roundedValue = round(round(value / 0.1) * 0.1, 1)
+            if value <= 30:  # extra round to keep out fp rounding errors
+                roundedValue = round(round(value / 1) * 1, 1)
 
             modeValues[VorA] = roundedValue
             if VorA == "APW":
@@ -144,38 +143,40 @@ class PacemakerInterface:
                 vpwLabel.config(text=f"VPW: {roundedValue} ms")
 
         # AS and VS update when the slider changes
+        #now simple 0-5V with .1 incrememnts
         def AVSensChange(value, VorA):
             value = float(value)
-            if 0.25 <= value <= 0.375:
-                roundedValue = 0.25
-            elif value <= 0.625:
-                roundedValue = 0.5
-            elif value <= 0.875:
-                roundedValue = 0.75
-            elif value <= 1:
-                roundedValue = 1.0
-            elif value <= 10:
-                roundedValue = round(value / 0.5) * 0.5
+            if 0 <= value <= 5:
+                roundedValue = round(round(value / 0.1) * 0.1, 1)
+            # elif value <= 0.625:
+            #     roundedValue = 0.5
+            # elif value <= 0.875:
+            #     roundedValue = 0.75
+            # elif value <= 1:
+            #     roundedValue = 1.0
+            # elif value <= 10:
+            #     roundedValue = round(value / 0.5) * 0.5
 
             modeValues[VorA] = roundedValue
             if VorA == "AS":
-                asLabel.config(text=f"AS: {roundedValue} mV")
+                asLabel.config(text=f"AS: {roundedValue} V")
             elif VorA == "VS":
-                vsLabel.config(text=f"VS: {roundedValue} mV")
+                vsLabel.config(text=f"VS: {roundedValue} V")
 
         # AA and VA update when the slider changes
+        #updated for ass 2, instea dof 2 seperate intervals, now have 1 interval from .1-5
         def VAAmpChange(value, VorA):
             value = float(value)
-            if value < 0.5:
-                roundedValue = 0
-            elif value < 3.2:
+            if 0.1 <= value <= 5 :
                 roundedValue = round(round(value / 0.1) * 0.1, 1)
-            elif value < 3.35:
-                roundedValue = 3.2
-            elif value < 3.5:
-                roundedValue = 3.5
-            elif value <= 7:
-                roundedValue = round(value / 0.5, 1) * 0.5
+            # elif value < 3.2:
+            #     roundedValue = round(round(value / 0.1) * 0.1, 1)
+            # elif value < 3.35:
+            #     roundedValue = 3.2
+            # elif value < 3.5:
+            #     roundedValue = 3.5
+            # elif value <= 7:
+            #     roundedValue = round(value / 0.5, 1) * 0.5
 
             modeValues[VorA] = roundedValue
             if VorA == "AA":
@@ -223,14 +224,14 @@ class PacemakerInterface:
             aaLabel = tk.Label(settingsPage, text=f"AA: {modeValues['AA']} V")
             aaLabel.pack(pady=(8, 0))
 
-            aaSlider = ttk.Scale(settingsPage, from_=0, to=7, length=200, orient="horizontal", value=modeValues["AA"],
+            aaSlider = ttk.Scale(settingsPage, from_=0, to=5, length=200, orient="horizontal", value=modeValues["AA"],
                                  command=lambda value: VAAmpChange(value, "AA"))
             aaSlider.pack()
 
             apwLabel = tk.Label(settingsPage, text=f"APW: {modeValues['APW']} ms")
             apwLabel.pack(pady=(8, 0))
 
-            apwSlider = ttk.Scale(settingsPage, from_=0.05, to=1.9, length=200, orient="horizontal",
+            apwSlider = ttk.Scale(settingsPage, from_=1, to=30, length=200, orient="horizontal",
                                   value=modeValues["APW"], command=lambda value: VAPWChange(value, "APW"))
             apwSlider.pack()
 
@@ -239,14 +240,14 @@ class PacemakerInterface:
             vaLabel = tk.Label(settingsPage, text=f"VA: {modeValues['VA']} V")
             vaLabel.pack(pady=(8, 0))
 
-            vaSlider = ttk.Scale(settingsPage, from_=0, to=7, length=200, orient="horizontal", value=modeValues["VA"],
+            vaSlider = ttk.Scale(settingsPage, from_=0, to=5, length=200, orient="horizontal", value=modeValues["VA"],
                                  command=lambda value: VAAmpChange(value, "VA"))
             vaSlider.pack()
 
             vpwLabel = tk.Label(settingsPage, text=f"VPW: {modeValues['VPW']} ms")
             vpwLabel.pack(pady=(8, 0))
 
-            vpwSlider = ttk.Scale(settingsPage, from_=0.05, to=1.9, length=200, orient="horizontal",
+            vpwSlider = ttk.Scale(settingsPage, from_=1, to=30, length=200, orient="horizontal",
                                   value=modeValues["VPW"], command=lambda value: VAPWChange(value, "VPW"))
             vpwSlider.pack()
 
@@ -259,10 +260,10 @@ class PacemakerInterface:
                                   value=modeValues["ARP"], command=lambda value: generalChange(value, 10, "ARP", "ms"))
             arpSlider.pack()
 
-            asLabel = tk.Label(settingsPage, text=f"AS: {modeValues['AS']} mV")
+            asLabel = tk.Label(settingsPage, text=f"AS: {modeValues['AS']} V")
             asLabel.pack(pady=(8, 0))
 
-            asSlider = ttk.Scale(settingsPage, from_=0.25, to=10, length=200, orient="horizontal",
+            asSlider = ttk.Scale(settingsPage, from_=0, to=5, length=200, orient="horizontal",
                                  value=modeValues["AS"], command=lambda value: AVSensChange(value, "AS"))
             asSlider.pack()
 
@@ -282,10 +283,10 @@ class PacemakerInterface:
                                   value=modeValues["VRP"], command=lambda value: generalChange(value, 10, "VRP", "ms"))
             vrpSlider.pack()
 
-            vsLabel = tk.Label(settingsPage, text=f"VS: {modeValues['VS']} mV")
+            vsLabel = tk.Label(settingsPage, text=f"VS: {modeValues['VS']} V")
             vsLabel.pack(pady=(8, 0))
 
-            vsSlider = ttk.Scale(settingsPage, from_=0.25, to=10, length=200, orient="horizontal",
+            vsSlider = ttk.Scale(settingsPage, from_=0, to=5, length=200, orient="horizontal",
                                  value=modeValues["VS"], command=lambda value: AVSensChange(value, "VS"))
             vsSlider.pack()
 
