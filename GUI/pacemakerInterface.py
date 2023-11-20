@@ -196,7 +196,7 @@ class PacemakerInterface:
             elif VorA == "VA":
                 vaLabel.config(text=f"VA: {roundedValue} V")
 
-        def ACTIVChange(value):
+        def ACTIVChange(value, Activ):
             value = float(value)
             mode = "V-Low"
             if 0.75 <= value < 1:
@@ -221,6 +221,7 @@ class PacemakerInterface:
                 roundedValue = 3.75
                 mode = "V-High"
             
+            modeValues[Activ] = roundedValue
             activLabel.config(text=f"ACTIV: {mode} V")
 
         # General function for when the slider changes
@@ -365,7 +366,7 @@ class PacemakerInterface:
 
             activLabel = tk.Label(slidersContainer, text=f"ACTIV: {modeValues['ACTIV']} V")
             activLabel.grid(row=row, column=col, pady=(8, 0))
-            activSlider = ttk.Scale(slidersContainer, from_=0.75, to=3.75, length=200, orient="horizontal", value=modeValues["ACTIV"], command=lambda value: ACTIVChange(value))
+            activSlider = ttk.Scale(slidersContainer, from_=0.75, to=3.75, length=200, orient="horizontal", value=modeValues["ACTIV"], command=lambda value: ACTIVChange(value, "ACTIV"))
             activSlider.grid(row=row+1, column=col, padx=20)
             updateRowCol()
 
