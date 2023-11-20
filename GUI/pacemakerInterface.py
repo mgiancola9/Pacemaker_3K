@@ -130,7 +130,7 @@ class PacemakerInterface:
             #     hystLabel.config(text=f"HYST: {roundedValue} ppm")
 
         # VPW and APW update when the slider changes
-        # new changes for ass 2: program vals = 1-30ms old was (.1-1.9), incrememt by 1ms old was .1 (no 0.05 now), nominal = 1ms was 0.4
+        # Updated for ass 2: program vals = 1-30ms old was (.1-1.9), incrememt by 1ms old was .1 (no 0.05 now), nominal = 1ms was 0.4
         def VAPWChange(value, VorA):
             value = float(value)
             if value <= 30:  # extra round to keep out fp rounding errors
@@ -143,19 +143,11 @@ class PacemakerInterface:
                 vpwLabel.config(text=f"VPW: {roundedValue} ms")
 
         # AS and VS update when the slider changes
-        #now simple 0-5V with .1 incrememnts
+        # Updated for ass 2, now simple 0-5V interval with .1 increments
         def AVSensChange(value, VorA):
             value = float(value)
             if 0 <= value <= 5:
                 roundedValue = round(round(value / 0.1) * 0.1, 1)
-            # elif value <= 0.625:
-            #     roundedValue = 0.5
-            # elif value <= 0.875:
-            #     roundedValue = 0.75
-            # elif value <= 1:
-            #     roundedValue = 1.0
-            # elif value <= 10:
-            #     roundedValue = round(value / 0.5) * 0.5
 
             modeValues[VorA] = roundedValue
             if VorA == "AS":
@@ -164,19 +156,11 @@ class PacemakerInterface:
                 vsLabel.config(text=f"VS: {roundedValue} V")
 
         # AA and VA update when the slider changes
-        #updated for ass 2, instea dof 2 seperate intervals, now have 1 interval from .1-5
+        # Updated for ass 2, now simple 0-5V interval with .1 incrememnts
         def VAAmpChange(value, VorA):
             value = float(value)
-            if 0.1 <= value <= 5 :
+            if 0 <= value <= 5 :
                 roundedValue = round(round(value / 0.1) * 0.1, 1)
-            # elif value < 3.2:
-            #     roundedValue = round(round(value / 0.1) * 0.1, 1)
-            # elif value < 3.35:
-            #     roundedValue = 3.2
-            # elif value < 3.5:
-            #     roundedValue = 3.5
-            # elif value <= 7:
-            #     roundedValue = round(value / 0.5, 1) * 0.5
 
             modeValues[VorA] = roundedValue
             if VorA == "AA":
@@ -209,26 +193,26 @@ class PacemakerInterface:
 
         # Updates current row and column based on slider that was added.
         row = col = 0
-        def updateRowCol(row,col):
+        def updateRowCol():
+            nonlocal row, col
             col = 1 - col
             if col == 0:
-                row += 2 # Move by 2 rows since label and slider takes two rows instead of 1
+                row += 2  # Move by 2 rows since label and slider take two rows instead of 1
 
-            return row,col
 
         # LRL slider for all modes
         lrlLabel = tk.Label(slidersContainer, text=f"LRL: {modeValues['LRL']} ppm")
         lrlLabel.grid(row=row, column=col, pady=(8, 0))
         lrlSlider = ttk.Scale(slidersContainer, from_=30, to=175, length=200, orient="horizontal", value=modeValues["LRL"], command=lambda value: LRLHChange(value, "LRL"))
         lrlSlider.grid(row=row+1, column=col, padx=20)
-        row,col = updateRowCol(row,col)
+        updateRowCol()
 
         # URL slider for all modes
         urlLabel = tk.Label(slidersContainer, text=f"URL: {modeValues['URL']} ppm")
         urlLabel.grid(row=row, column=col, pady=(8, 0))
         urlSlider = ttk.Scale(slidersContainer, from_=50, to=175, length=200, orient="horizontal", value=modeValues["URL"], command=lambda value: generalChange(value, 5, "URL", "ppm"))
         urlSlider.grid(row=row+1, column=col, padx=20)
-        row,col = updateRowCol(row,col)
+        updateRowCol()
 
         # Sliders for AOO and AAI
         if mode == "AOO" or mode == "AAI":
@@ -236,13 +220,13 @@ class PacemakerInterface:
             aaLabel.grid(row=row, column=col, pady=(8, 0))
             aaSlider = ttk.Scale(slidersContainer, from_=0, to=5, length=200, orient="horizontal", value=modeValues["AA"], command=lambda value: VAAmpChange(value, "AA"))
             aaSlider.grid(row=row+1, column=col, padx=20)
-            row,col = updateRowCol(row,col)
+            updateRowCol()
 
             apwLabel = tk.Label(slidersContainer, text=f"APW: {modeValues['APW']} ms")
             apwLabel.grid(row=row, column=col, pady=(8, 0))
             apwSlider = ttk.Scale(slidersContainer, from_=1, to=30, length=200, orient="horizontal", value=modeValues["APW"], command=lambda value: VAPWChange(value, "APW"))
             apwSlider.grid(row=row+1, column=col, padx=20)
-            row,col = updateRowCol(row,col)
+            updateRowCol()
 
         # Sliders for VOO and VII
         if mode == "VOO" or mode == "VVI":
@@ -250,13 +234,13 @@ class PacemakerInterface:
             vaLabel.grid(row=row, column=col, pady=(8, 0))
             vaSlider = ttk.Scale(slidersContainer, from_=0, to=5, length=200, orient="horizontal", value=modeValues["VA"], command=lambda value: VAAmpChange(value, "VA"))
             vaSlider.grid(row=row+1, column=col, padx=20)
-            row,col = updateRowCol(row,col)
+            updateRowCol()
 
             vpwLabel = tk.Label(slidersContainer, text=f"VPW: {modeValues['VPW']} ms")
             vpwLabel.grid(row=row, column=col, pady=(8, 0))
             vpwSlider = ttk.Scale(slidersContainer, from_=1, to=30, length=200, orient="horizontal", value=modeValues["VPW"], command=lambda value: VAPWChange(value, "VPW"))
             vpwSlider.grid(row=row+1, column=col, padx=20)
-            row,col = updateRowCol(row,col)
+            updateRowCol()
 
         # Sliders only for AAI
         if mode == "AAI":
@@ -264,19 +248,19 @@ class PacemakerInterface:
             arpLabel.grid(row=row, column=col, pady=(8, 0))
             arpSlider = ttk.Scale(slidersContainer, from_=150, to=500, length=200, orient="horizontal", value=modeValues["ARP"], command=lambda value: generalChange(value, 10, "ARP", "ms"))
             arpSlider.grid(row=row+1, column=col, padx=20)
-            row,col = updateRowCol(row,col)
+            updateRowCol()
 
             asLabel = tk.Label(slidersContainer, text=f"AS: {modeValues['AS']} V")
             asLabel.grid(row=row, column=col, pady=(8, 0))
             asSlider = ttk.Scale(slidersContainer, from_=0, to=5, length=200, orient="horizontal", value=modeValues["AS"], command=lambda value: AVSensChange(value, "AS"))
             asSlider.grid(row=row+1, column=col, padx=20)
-            row,col = updateRowCol(row,col)
+            updateRowCol()
 
             pvarpLabel = tk.Label(slidersContainer, text=f"PVARP: {modeValues['PVARP']} ms")
             pvarpLabel.grid(row=row, column=col, pady=(8, 0))
             pvarpSlider = ttk.Scale(slidersContainer, from_=150, to=500, length=200, orient="horizontal", value=modeValues["PVARP"], command=lambda value: generalChange(value, 10, "PVARP", "ms"))
             pvarpSlider.grid(row=row+1, column=col, padx=20)
-            row,col = updateRowCol(row,col)
+            updateRowCol()
 
         # Sliders only for VVI
         elif mode == "VVI":
@@ -284,13 +268,13 @@ class PacemakerInterface:
             vrpLabel.grid(row=row, column=col, pady=(8, 0))
             vrpSlider = ttk.Scale(slidersContainer, from_=150, to=500, length=200, orient="horizontal", value=modeValues["VRP"], command=lambda value: generalChange(value, 10, "VRP", "ms"))
             vrpSlider.grid(row=row+1, column=col, padx=20)
-            row,col = updateRowCol(row,col)
+            updateRowCol()
 
             vsLabel = tk.Label(slidersContainer, text=f"VS: {modeValues['VS']} V")
             vsLabel.grid(row=row, column=col, pady=(8, 0))
             vsSlider = ttk.Scale(slidersContainer, from_=0, to=5, length=200, orient="horizontal", value=modeValues["VS"], command=lambda value: AVSensChange(value, "VS"))
             vsSlider.grid(row=row+1, column=col, padx=20)
-            row,col = updateRowCol(row,col)
+            updateRowCol()
 
         # shared VVI and AAI slider
         if mode == "VVI" or mode == "AAI":
@@ -306,7 +290,7 @@ class PacemakerInterface:
             rsLabel.grid(row=row, column=col, pady=(8, 0))
             rsSlider = ttk.Scale(slidersContainer, from_=0, to=25, length=200, orient="horizontal", value=modeValues["RS"], command=lambda value: generalChange(value, 3, "RS", "%"))
             rsSlider.grid(row=row+1, column=col, padx=20)
-            row,col = updateRowCol(row,col)
+            updateRowCol()
 
         # Bottom buttons to save and go back
         buttonFrame = tk.Frame(settingsPage)
