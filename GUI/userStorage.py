@@ -18,6 +18,13 @@ class UserStorage:
         self.HYST_VALUE = 60
         self.RATESM_VALUE = 0
 
+        #ass 2 additions:
+        self.MSR_VALUE = 120
+        self.ACTIV_VALUE = 2
+        self.REACT_VALUE = 30
+        self.RESPF_VALUE = 8
+        self.RECOVT_VALUE = 5
+
         # Reads current storage
         self.userData = None
         self.openStorage()
@@ -72,10 +79,10 @@ class UserStorage:
                     "VOO": {"LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "VA": self.VA_VALUE, "VPW": self.VPW_VALUE},
                     "AAI": {"LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "AA": self.AA_VALUE, "APW": self.APW_VALUE, "AS": self.AS_VALUE, "ARP": self.ARP_VALUE, "PVARP": self.PVARP_VALUE, "HYST": self.HYST_VALUE, "RS": self.RATESM_VALUE},
                     "VVI": {"LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "VA": self.VA_VALUE, "VPW": self.VPW_VALUE, "VS": self.VS_VALUE, "VRP": self.VRP_VALUE, "HYST": self.HYST_VALUE, "RS": self.RATESM_VALUE},
-                    "AOOR": {"LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "AA": self.AA_VALUE, "APW": self.APW_VALUE},
-                    "VOOR": {"LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "VA": self.VA_VALUE, "VPW": self.VPW_VALUE},
-                    "AAIR": {"LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "AA": self.AA_VALUE, "APW": self.APW_VALUE, "AS": self.AS_VALUE, "ARP": self.ARP_VALUE, "PVARP": self.PVARP_VALUE, "HYST": self.HYST_VALUE, "RS": self.RATESM_VALUE},
-                    "VVIR": {"LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "VA": self.VA_VALUE, "VPW": self.VPW_VALUE, "VS": self.VS_VALUE, "VRP": self.VRP_VALUE, "HYST": self.HYST_VALUE, "RS": self.RATESM_VALUE},
+                    "AOOR": {"LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "AA": self.AA_VALUE, "APW": self.APW_VALUE, "MSR": self.MSR_VALUE, "ACTIV": self.ACTIV_VALUE, "REACT": self.REACT_VALUE, "RESPF": self.RESPF_VALUE, "RECOVT": self.RECOVT_VALUE},
+                    "VOOR": {"LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "VA": self.VA_VALUE, "VPW": self.VPW_VALUE, "MSR": self.MSR_VALUE, "ACTIV": self.ACTIV_VALUE, "REACT": self.REACT_VALUE, "RESPF": self.RESPF_VALUE, "RECOVT": self.RECOVT_VALUE},
+                    "AAIR": {"LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "AA": self.AA_VALUE, "APW": self.APW_VALUE, "AS": self.AS_VALUE, "ARP": self.ARP_VALUE, "PVARP": self.PVARP_VALUE, "HYST": self.HYST_VALUE, "RS": self.RATESM_VALUE, "MSR": self.MSR_VALUE, "ACTIV": self.ACTIV_VALUE, "REACT": self.REACT_VALUE, "RESPF": self.RESPF_VALUE, "RECOVT": self.RECOVT_VALUE},
+                    "VVIR": {"LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "VA": self.VA_VALUE, "VPW": self.VPW_VALUE, "VS": self.VS_VALUE, "VRP": self.VRP_VALUE, "HYST": self.HYST_VALUE, "RS": self.RATESM_VALUE, "MSR": self.MSR_VALUE, "ACTIV": self.ACTIV_VALUE, "REACT": self.REACT_VALUE, "RESPF": self.RESPF_VALUE, "RECOVT": self.RECOVT_VALUE},
                     "lastDeviceUsed": None
                 }
 
