@@ -244,7 +244,7 @@ class PacemakerInterface:
             elif type == "MSR":
                 msrLabel.config(text=f"MSR: {roundedValue} {unit}")
             elif type == "REACT":
-                reactLabel.config(text=f"MSR: {roundedValue} {unit}")
+                reactLabel.config(text=f"REACT: {roundedValue} {unit}")
             elif type == "RESPF":
                 respfLabel.config(text=f"RESPF: {roundedValue} {unit}")
             elif type == "RECOVT":
