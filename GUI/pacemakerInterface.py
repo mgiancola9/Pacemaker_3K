@@ -203,92 +203,94 @@ class PacemakerInterface:
                     modeValues[type] = roundedValue
                 rsLabel.config(text=f"RS: {roundedValue} {unit}")
 
-        # LRL slider for all modes
-        lrlLabel = tk.Label(settingsPage, text=f"LRL: {modeValues['LRL']} ppm")
-        lrlLabel.pack(pady=(8, 0))
+        # Container to hold all sliders and titles
+        slidersContainer = tk.Frame(settingsPage)
+        slidersContainer.pack(fill=tk.Y)
 
-        lrlSlider = ttk.Scale(settingsPage, from_=30, to=175, length=200, orient="horizontal", value=modeValues["LRL"],
-                             command=lambda value: LRLHChange(value, "LRL"))
-        lrlSlider.pack()
+        # Updates current row and column based on slider that was added.
+        row = col = 0
+        def updateRowCol(row,col):
+            col = 1 - col
+            if col == 0:
+                row += 2 # Move by 2 rows since label and slider takes two rows instead of 1
+
+            return row,col
+
+        # LRL slider for all modes
+        lrlLabel = tk.Label(slidersContainer, text=f"LRL: {modeValues['LRL']} ppm")
+        lrlLabel.grid(row=row, column=col, pady=(8, 0))
+        lrlSlider = ttk.Scale(slidersContainer, from_=30, to=175, length=200, orient="horizontal", value=modeValues["LRL"], command=lambda value: LRLHChange(value, "LRL"))
+        lrlSlider.grid(row=row+1, column=col, padx=20)
+        row,col = updateRowCol(row,col)
 
         # URL slider for all modes
-        urlLabel = tk.Label(settingsPage, text=f"URL: {modeValues['URL']} ppm")
-        urlLabel.pack(pady=(8, 0))
-
-        urlSlider = ttk.Scale(settingsPage, from_=50, to=175, length=200, orient="horizontal", value=modeValues["URL"],
-                              command=lambda value: generalChange(value, 5, "URL", "ppm"))
-        urlSlider.pack()
+        urlLabel = tk.Label(slidersContainer, text=f"URL: {modeValues['URL']} ppm")
+        urlLabel.grid(row=row, column=col, pady=(8, 0))
+        urlSlider = ttk.Scale(slidersContainer, from_=50, to=175, length=200, orient="horizontal", value=modeValues["URL"], command=lambda value: generalChange(value, 5, "URL", "ppm"))
+        urlSlider.grid(row=row+1, column=col, padx=20)
+        row,col = updateRowCol(row,col)
 
         # Sliders for AOO and AAI
         if mode == "AOO" or mode == "AAI":
-            aaLabel = tk.Label(settingsPage, text=f"AA: {modeValues['AA']} V")
-            aaLabel.pack(pady=(8, 0))
+            aaLabel = tk.Label(slidersContainer, text=f"AA: {modeValues['AA']} V")
+            aaLabel.grid(row=row, column=col, pady=(8, 0))
+            aaSlider = ttk.Scale(slidersContainer, from_=0, to=5, length=200, orient="horizontal", value=modeValues["AA"], command=lambda value: VAAmpChange(value, "AA"))
+            aaSlider.grid(row=row+1, column=col, padx=20)
+            row,col = updateRowCol(row,col)
 
-            aaSlider = ttk.Scale(settingsPage, from_=0, to=5, length=200, orient="horizontal", value=modeValues["AA"],
-                                 command=lambda value: VAAmpChange(value, "AA"))
-            aaSlider.pack()
-
-            apwLabel = tk.Label(settingsPage, text=f"APW: {modeValues['APW']} ms")
-            apwLabel.pack(pady=(8, 0))
-
-            apwSlider = ttk.Scale(settingsPage, from_=1, to=30, length=200, orient="horizontal",
-                                  value=modeValues["APW"], command=lambda value: VAPWChange(value, "APW"))
-            apwSlider.pack()
+            apwLabel = tk.Label(slidersContainer, text=f"APW: {modeValues['APW']} ms")
+            apwLabel.grid(row=row, column=col, pady=(8, 0))
+            apwSlider = ttk.Scale(slidersContainer, from_=1, to=30, length=200, orient="horizontal", value=modeValues["APW"], command=lambda value: VAPWChange(value, "APW"))
+            apwSlider.grid(row=row+1, column=col, padx=20)
+            row,col = updateRowCol(row,col)
 
         # Sliders for VOO and VII
-        elif mode == "VOO" or mode == "VVI":
-            vaLabel = tk.Label(settingsPage, text=f"VA: {modeValues['VA']} V")
-            vaLabel.pack(pady=(8, 0))
+        if mode == "VOO" or mode == "VVI":
+            vaLabel = tk.Label(slidersContainer, text=f"VA: {modeValues['VA']} V")
+            vaLabel.grid(row=row, column=col, pady=(8, 0))
+            vaSlider = ttk.Scale(slidersContainer, from_=0, to=5, length=200, orient="horizontal", value=modeValues["VA"], command=lambda value: VAAmpChange(value, "VA"))
+            vaSlider.grid(row=row+1, column=col, padx=20)
+            row,col = updateRowCol(row,col)
 
-            vaSlider = ttk.Scale(settingsPage, from_=0, to=5, length=200, orient="horizontal", value=modeValues["VA"],
-                                 command=lambda value: VAAmpChange(value, "VA"))
-            vaSlider.pack()
-
-            vpwLabel = tk.Label(settingsPage, text=f"VPW: {modeValues['VPW']} ms")
-            vpwLabel.pack(pady=(8, 0))
-
-            vpwSlider = ttk.Scale(settingsPage, from_=1, to=30, length=200, orient="horizontal",
-                                  value=modeValues["VPW"], command=lambda value: VAPWChange(value, "VPW"))
-            vpwSlider.pack()
+            vpwLabel = tk.Label(slidersContainer, text=f"VPW: {modeValues['VPW']} ms")
+            vpwLabel.grid(row=row, column=col, pady=(8, 0))
+            vpwSlider = ttk.Scale(slidersContainer, from_=1, to=30, length=200, orient="horizontal", value=modeValues["VPW"], command=lambda value: VAPWChange(value, "VPW"))
+            vpwSlider.grid(row=row+1, column=col, padx=20)
+            row,col = updateRowCol(row,col)
 
         # Sliders only for AAI
         if mode == "AAI":
-            arpLabel = tk.Label(settingsPage, text=f"ARP: {modeValues['ARP']} ms")
-            arpLabel.pack(pady=(8, 0))
+            arpLabel = tk.Label(slidersContainer, text=f"ARP: {modeValues['ARP']} ms")
+            arpLabel.grid(row=row, column=col, pady=(8, 0))
+            arpSlider = ttk.Scale(slidersContainer, from_=150, to=500, length=200, orient="horizontal", value=modeValues["ARP"], command=lambda value: generalChange(value, 10, "ARP", "ms"))
+            arpSlider.grid(row=row+1, column=col, padx=20)
+            row,col = updateRowCol(row,col)
 
-            arpSlider = ttk.Scale(settingsPage, from_=150, to=500, length=200, orient="horizontal",
-                                  value=modeValues["ARP"], command=lambda value: generalChange(value, 10, "ARP", "ms"))
-            arpSlider.pack()
+            asLabel = tk.Label(slidersContainer, text=f"AS: {modeValues['AS']} V")
+            asLabel.grid(row=row, column=col, pady=(8, 0))
+            asSlider = ttk.Scale(slidersContainer, from_=0, to=5, length=200, orient="horizontal", value=modeValues["AS"], command=lambda value: AVSensChange(value, "AS"))
+            asSlider.grid(row=row+1, column=col, padx=20)
+            row,col = updateRowCol(row,col)
 
-            asLabel = tk.Label(settingsPage, text=f"AS: {modeValues['AS']} V")
-            asLabel.pack(pady=(8, 0))
-
-            asSlider = ttk.Scale(settingsPage, from_=0, to=5, length=200, orient="horizontal",
-                                 value=modeValues["AS"], command=lambda value: AVSensChange(value, "AS"))
-            asSlider.pack()
-
-            pvarpLabel = tk.Label(settingsPage, text=f"PVARP: {modeValues['PVARP']} ms")
-            pvarpLabel.pack(pady=(8, 0))
-
-            pvarpSlider = ttk.Scale(settingsPage, from_=150, to=500, length=200, orient="horizontal",
-                                   value=modeValues["PVARP"], command=lambda value: generalChange(value, 10, "PVARP", "ms"))
-            pvarpSlider.pack()
+            pvarpLabel = tk.Label(slidersContainer, text=f"PVARP: {modeValues['PVARP']} ms")
+            pvarpLabel.grid(row=row, column=col, pady=(8, 0))
+            pvarpSlider = ttk.Scale(slidersContainer, from_=150, to=500, length=200, orient="horizontal", value=modeValues["PVARP"], command=lambda value: generalChange(value, 10, "PVARP", "ms"))
+            pvarpSlider.grid(row=row+1, column=col, padx=20)
+            row,col = updateRowCol(row,col)
 
         # Sliders only for VVI
         elif mode == "VVI":
-            vrpLabel = tk.Label(settingsPage, text=f"VRP: {modeValues['VRP']} ms")
-            vrpLabel.pack(pady=(8, 0))
+            vrpLabel = tk.Label(slidersContainer, text=f"VRP: {modeValues['VRP']} ms")
+            vrpLabel.grid(row=row, column=col, pady=(8, 0))
+            vrpSlider = ttk.Scale(slidersContainer, from_=150, to=500, length=200, orient="horizontal", value=modeValues["VRP"], command=lambda value: generalChange(value, 10, "VRP", "ms"))
+            vrpSlider.grid(row=row+1, column=col, padx=20)
+            row,col = updateRowCol(row,col)
 
-            vrpSlider = ttk.Scale(settingsPage, from_=150, to=500, length=200, orient="horizontal",
-                                  value=modeValues["VRP"], command=lambda value: generalChange(value, 10, "VRP", "ms"))
-            vrpSlider.pack()
-
-            vsLabel = tk.Label(settingsPage, text=f"VS: {modeValues['VS']} V")
-            vsLabel.pack(pady=(8, 0))
-
-            vsSlider = ttk.Scale(settingsPage, from_=0, to=5, length=200, orient="horizontal",
-                                 value=modeValues["VS"], command=lambda value: AVSensChange(value, "VS"))
-            vsSlider.pack()
+            vsLabel = tk.Label(slidersContainer, text=f"VS: {modeValues['VS']} V")
+            vsLabel.grid(row=row, column=col, pady=(8, 0))
+            vsSlider = ttk.Scale(slidersContainer, from_=0, to=5, length=200, orient="horizontal", value=modeValues["VS"], command=lambda value: AVSensChange(value, "VS"))
+            vsSlider.grid(row=row+1, column=col, padx=20)
+            row,col = updateRowCol(row,col)
 
         # shared VVI and AAI slider
         if mode == "VVI" or mode == "AAI":
@@ -300,12 +302,11 @@ class PacemakerInterface:
             # hystSlider.pack()
 
             # rate smoothing slider
-            rsLabel = tk.Label(settingsPage, text=f"RS: {modeValues['RS']} %")
-            rsLabel.pack(pady=(10, 0))
-
-            rsSlider = ttk.Scale(settingsPage, from_=0, to=25, length=200, orient="horizontal", value=modeValues["RS"],
-                                 command=lambda value: generalChange(value, 3, "RS", "%"))
-            rsSlider.pack()
+            rsLabel = tk.Label(slidersContainer, text=f"RS: {modeValues['RS']} %")
+            rsLabel.grid(row=row, column=col, pady=(8, 0))
+            rsSlider = ttk.Scale(slidersContainer, from_=0, to=25, length=200, orient="horizontal", value=modeValues["RS"], command=lambda value: generalChange(value, 3, "RS", "%"))
+            rsSlider.grid(row=row+1, column=col, padx=20)
+            row,col = updateRowCol(row,col)
 
         # Bottom buttons to save and go back
         buttonFrame = tk.Frame(settingsPage)
