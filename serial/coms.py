@@ -7,7 +7,7 @@ def list_available_ports():
     else:
         print("Available COM ports:")
         for port, desc, hwid in sorted(ports):
-            print(f"{port}: {desc} [{hwid}]")
+            print(f"{port}: {desc}")
 
 # Call the function to list available COM ports
 list_available_ports()

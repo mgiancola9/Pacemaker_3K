@@ -2,6 +2,9 @@ import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
 from egramInterface import EgramInterface
+import serial
+import serial.tools.list_ports
+import time
 
 # Class for all pacemaker modifications
 class PacemakerInterface:
@@ -21,6 +24,31 @@ class PacemakerInterface:
         self.loginInterface = loginInterface
         self.userStorage = userStorage
         self.egramInterface = EgramInterface(app,box,self)
+
+        # Defines whether pacemaker device is connected or not
+        self.device = False
+
+        # self.deviceStatus()
+
+    # Constantly checks whether device is connected or disconnected
+    def deviceStatus(self):
+        pacemakerName = "JLink CDC UART Port"
+
+        while True:
+            deviceConnected = False
+            ports = serial.tools.list_ports.comports()
+
+            for port, desc, hwid in sorted(ports):
+                if pacemakerName in desc:
+                    deviceConnected = True
+                    break
+            
+            if deviceConnected and not self.device:
+                print("Device connected.")
+            elif not deviceConnected and self.device:
+                print("Device disconnected.")
+
+            time.sleep(1)
 
     # Home page when user is logged in. Takes currentUser parameter to communicate between loginInterface class
     def homePage(self, currentUser = None):
