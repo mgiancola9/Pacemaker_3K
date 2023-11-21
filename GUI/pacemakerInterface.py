@@ -25,7 +25,7 @@ class PacemakerInterface:
         self.egramInterface = EgramInterface(app,box,self)
 
         # Calls polling function to detect whether pacemaker is connected, for every second.
-        self.deviceStatus = False
+        self.deviceStatus = "Disconnected"
         self.loggedIn = True
         self.deviceStatusDisplay = None
 
@@ -37,8 +37,8 @@ class PacemakerInterface:
         deviceConnected = self.detectDeviceStatus()
         
         # If device has just been connected, set device status true and inform the user
-        if deviceConnected and not self.deviceStatus:
-            self.deviceStatus = True
+        if deviceConnected and self.deviceStatus == "Disconnected":
+            self.deviceStatus = "Connected"
             if not initial:             # If this is the initial login, do not notify the user!
                 if self.newDevice():    # If this is a new device, notify the user!
                     messagebox.showinfo("Pacemaker Connected", "NEW Pacemaker device has been connected!", parent=self.box)
@@ -46,16 +46,15 @@ class PacemakerInterface:
                     messagebox.showinfo("Pacemaker Connected", "Pacemaker device has been connected!", parent=self.box)
 
         # If device has just been disconnected, set device status false and inform the user
-        elif not deviceConnected and self.deviceStatus:
-            self.deviceStatus = False
+        elif not deviceConnected and self.deviceStatus == "Connected":
+            self.deviceStatus = "Disconnected"
             if not initial:
                 messagebox.showinfo("Pacemaker Disconnected", "Pacemaker device has been disconnected!", parent=self.box)
 
         # Finally, displays current status on home page
-        if deviceConnected:
-            self.deviceStatusDisplay.config(text="Device Status: Connected")
-        else:
-            self.deviceStatusDisplay.config(text="Device Status: Disconnected")
+        deviceLabelExists = self.deviceStatusDisplay.winfo_exists()
+        if deviceLabelExists:
+            self.deviceStatusDisplay.config(text=f"Device Status: {self.deviceStatus}")
 
         self.box.after(1000, self.displayDeviceStatus)
 
@@ -76,9 +75,9 @@ class PacemakerInterface:
         return False
 
     # Home page when user is logged in. Takes currentUser parameter to communicate between loginInterface class
-    def homePage(self, currentUser = None):
+    def homePage(self, currentUser = None, newLogin=False):
         homePage = self.app.redirectPage()
-        if currentUser:
+        if newLogin:
             self.currentUser = currentUser
 
         title = tk.Label(homePage, text=f"Welcome, {self.currentUser['username']}!", font=self.titleFont, bg="pink2", height=2)
@@ -116,7 +115,7 @@ class PacemakerInterface:
         VVIRButton.grid(row=3, column=1, padx=10, pady=5)
 
         # Device status section
-        self.deviceStatusDisplay = tk.Label(homePage, text="Device Status: Disconnected", font=self.subtextFont)
+        self.deviceStatusDisplay = tk.Label(homePage, text=f"Device Status: {self.deviceStatus}", font=self.subtextFont)
         self.deviceStatusDisplay.pack(pady=(30, 0))
         deviceDescription = tk.Label(homePage, text="Connect or disconnect the device from the USB port.", font=self.subtextFont)
         deviceDescription.pack(pady=(10, 10))
@@ -136,8 +135,9 @@ class PacemakerInterface:
         logoutButton.pack(side="bottom", anchor="se", padx=5, pady=5)
 
         # Starts detecting if device has been connected or not
-        self.loggedIn = True
-        self.displayDeviceStatus(initial=True)
+        if newLogin:
+            self.loggedIn = True
+            self.displayDeviceStatus(initial=True)
 
     # Pacing mode pages
     def settingsPage(self, mode):

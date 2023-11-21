@@ -53,7 +53,7 @@ class LoginInterface:
             userFound, passwordFound, user = self.userStorage.searchUser(username,password)
 
             if userFound and passwordFound:
-                self.pacemakerInterface.homePage(user)
+                self.pacemakerInterface.homePage(user,True)
 
             elif userFound and not passwordFound:
                 messagebox.showwarning("Login Error", "Incorrect password for the username provided.", parent=self.box)
@@ -132,7 +132,7 @@ class LoginInterface:
 
             # Log new user in
             newUser = self.userStorage.addNewUser(username,password)
-            self.pacemakerInterface.homePage(newUser)
+            self.pacemakerInterface.homePage(newUser,True)
             messagebox.showinfo("Registration Successful", username + " has been registered!", parent=self.box)
 
         registerButton = tk.Button(registerPage, text="Register", font=self.subtextFont, command=registerUser, padx=40, pady=3)
