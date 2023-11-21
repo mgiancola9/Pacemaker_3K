@@ -199,7 +199,6 @@ class PacemakerInterface:
         # Updates ACTIV for slider. Also is used to initialize string for label, since it will be as int at first
         def ACTIVChange(value, Activ, initial=False):
             value = float(value)
-            mode = "V-Low"
             if 0.75 <= value < 1:
                 roundedValue = 0.75
                 mode = "V-Low"
