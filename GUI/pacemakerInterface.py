@@ -54,7 +54,7 @@ class PacemakerInterface:
         # Finally, displays current status on home page
         deviceLabelExists = self.deviceStatusDisplay.winfo_exists()
         if deviceLabelExists:
-            self.deviceStatusDisplay.config(text=f"Device Status: {self.deviceStatus}")
+            self.deviceStatusDisplay.config(text=f"Device Status: {self.deviceStatus}", fg='green' if self.deviceStatus == 'Connected' else 'red')
 
         self.box.after(1000, self.displayDeviceStatus)
 
@@ -115,7 +115,7 @@ class PacemakerInterface:
         VVIRButton.grid(row=3, column=1, padx=10, pady=5)
 
         # Device status section
-        self.deviceStatusDisplay = tk.Label(homePage, text=f"Device Status: {self.deviceStatus}", font=self.subtextFont)
+        self.deviceStatusDisplay = tk.Label(homePage, text=f"Device Status: {self.deviceStatus}", font=self.subtextFont, fg='green' if self.deviceStatus == 'Connected' else 'red')
         self.deviceStatusDisplay.pack(pady=(30, 0))
         deviceDescription = tk.Label(homePage, text="Connect or disconnect the device from the USB port.", font=self.subtextFont)
         deviceDescription.pack(pady=(10, 10))
