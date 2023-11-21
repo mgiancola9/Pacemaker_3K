@@ -184,7 +184,7 @@ class PacemakerInterface:
                 vsLabel.config(text=f"VS: {roundedValue} V")
 
         # AA and VA update when the slider changes
-        # Updated for ass 2, now simple 0-5V interval with .1 incrememnts
+        # Updated for ass 2, now simple 0-5V interval with .1 increments
         def VAAmpChange(value, VorA):
             value = float(value)
             if 0 <= value <= 5 :
@@ -196,7 +196,8 @@ class PacemakerInterface:
             elif VorA == "VA":
                 vaLabel.config(text=f"VA: {roundedValue} V")
 
-        def ACTIVChange(value, Activ):
+        # Updates ACTIV for slider. Also is used to initialize string for label, since it will be as int at first
+        def ACTIVChange(value, Activ, initial=False):
             value = float(value)
             mode = "V-Low"
             if 0.75 <= value < 1:
@@ -220,7 +221,12 @@ class PacemakerInterface:
             if value >= 3.5:
                 roundedValue = 3.75
                 mode = "V-High"
+
+            # If this is the initial call of this method for the label, return the mode to be labelled
+            if initial:
+                return mode
             
+            # Else, modify the slider and relabel the label as usual
             modeValues[Activ] = roundedValue
             activLabel.config(text=f"ACTIV: {mode} V")
 
@@ -364,7 +370,8 @@ class PacemakerInterface:
             msrSlider.grid(row=row+1, column=col, padx=20)
             updateRowCol()
 
-            activLabel = tk.Label(slidersContainer, text=f"ACTIV: {modeValues['ACTIV']} V")
+            # Calls ACTIVChange initially to receive string on what the current value is, instead of an int
+            activLabel = tk.Label(slidersContainer, text=f"ACTIV: {ACTIVChange(modeValues['ACTIV'], 'ACTIV', True)} V")
             activLabel.grid(row=row, column=col, pady=(8, 0))
             activSlider = ttk.Scale(slidersContainer, from_=0.75, to=3.75, length=200, orient="horizontal", value=modeValues["ACTIV"], command=lambda value: ACTIVChange(value, "ACTIV"))
             activSlider.grid(row=row+1, column=col, padx=20)
