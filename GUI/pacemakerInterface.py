@@ -4,7 +4,6 @@ from tkinter import ttk
 from egramInterface import EgramInterface
 import serial
 import serial.tools.list_ports
-import time
 
 # Class for all pacemaker modifications
 class PacemakerInterface:
@@ -25,36 +24,50 @@ class PacemakerInterface:
         self.userStorage = userStorage
         self.egramInterface = EgramInterface(app,box,self)
 
-        # Defines whether pacemaker device is connected or not
+        # Calls polling function to detect whether pacemaker is connected, for every second.
         self.device = False
+        self.loggedIn = True
 
-        # self.deviceStatus()
+    # Constantly displays status of device
+    def displayDeviceStatus(self):
+        # Do not check device if user is not logged in
+        if not self.loggedIn:
+            return
+
+        deviceConnected = self.detectDeviceStatus()
+        # Checks if the device has been disconnected or connected as a result
+        if deviceConnected and not self.device:
+            self.device = True
+            status = "Connected"
+            messagebox.showinfo("Pacemaker Connected", "Pacemaker device has been connected!", parent=self.box)
+        elif not deviceConnected and self.device:
+            self.device = False
+            status = "Connected"
+            messagebox.showinfo("Pacemaker Disconnected", "Pacemaker device has been disconnected!", parent=self.box)
+
+        self.box.after(1000, self.displayDeviceStatus)
 
     # Constantly checks whether device is connected or disconnected
-    def deviceStatus(self):
+    def detectDeviceStatus(self):
+        # Checks each available port and sees if pacemaker device is one of them
         pacemakerName = "JLink CDC UART Port"
+        ports = serial.tools.list_ports.comports()
 
-        while True:
-            deviceConnected = False
-            ports = serial.tools.list_ports.comports()
+        for port, desc, hwid in sorted(ports):
+            if pacemakerName in desc:
+                return True
 
-            for port, desc, hwid in sorted(ports):
-                if pacemakerName in desc:
-                    deviceConnected = True
-                    break
-            
-            if deviceConnected and not self.device:
-                print("Device connected.")
-            elif not deviceConnected and self.device:
-                print("Device disconnected.")
-
-            time.sleep(1)
+        return False
 
     # Home page when user is logged in. Takes currentUser parameter to communicate between loginInterface class
     def homePage(self, currentUser = None):
         homePage = self.app.redirectPage()
         if currentUser:
             self.currentUser = currentUser
+
+        # Starts detecting if device has been connected or not
+        self.loggedIn = True
+        self.displayDeviceStatus()
 
         title = tk.Label(homePage, text=f"Welcome, {self.currentUser['username']}!", font=self.titleFont, bg="pink2", height=2)
         title.pack(fill=tk.BOTH)
@@ -78,7 +91,6 @@ class PacemakerInterface:
         AAIButton = tk.Button(buttonsContainer, text="AAI", font=self.subtextFont, width=12, pady=3, command=lambda: self.settingsPage("AAI"))
         AAIButton.grid(row=1, column=1, padx=10, pady=5)
 
-        #Assignment 2 added modes:
         AOORButton = tk.Button(buttonsContainer, text="AOOR", font=self.subtextFont, width=12, pady=3, command=lambda: self.settingsPage("AOOR"))
         AOORButton.grid(row=2, column=0, padx=10, pady=5)
 
@@ -91,41 +103,24 @@ class PacemakerInterface:
         VVIRButton = tk.Button(buttonsContainer, text="VVIR", font=self.subtextFont, width=12, pady=3, command=lambda: self.settingsPage("VVIR"))
         VVIRButton.grid(row=3, column=1, padx=10, pady=5)
 
-        # Device detection section
-        deviceDescription = tk.Label(homePage, text="Connect the device.", font=self.subtextFont)
-        deviceDescription.pack(pady=(20, 10))
-
-        # Switches between connecting and disconnecting the device
-        def connectDevice():
-            status = connectButton.cget("text")
-            if status == "Connect":
-
-                # Checks if a new device. If it is, asks the user if they want to connect it or not
-                device = "device-a63145"
-                if device != self.currentUser["lastDeviceUsed"]:
-                    result = messagebox.askquestion("New Device", f"New device has been detected. Do you want to set it as your primary device?")
-                    if result == "yes":
-                        self.currentUser["lastDeviceUsed"] = device
-                        status = "Disconnect"
-                else:
-                    status = "Disconnect"
-            else:
-                status = "Connect"
-
-            connectButton.configure(text=status)
-
-        connectButton = tk.Button(homePage, text="Connect", font=self.subtextFont, command=connectDevice, width=12, pady=3)
-        connectButton.pack()
+        # Device status section
+        deviceStatus = tk.Label(homePage, text="Device Status: Disconnected", font=self.subtextFont)
+        deviceStatus.pack(pady=(30, 0))
+        deviceDescription = tk.Label(homePage, text="Connect or disconnect the device from the USB port.", font=self.subtextFont)
+        deviceDescription.pack(pady=(10, 10))
 
         # Egram section
         egramDescription = tk.Label(homePage, text="Develop egram data.", font=self.subtextFont)
         egramDescription.pack(pady=(20, 10))
-
         egramButton = tk.Button(homePage, text="egram", font=self.subtextFont, command=lambda currentUser=self.currentUser: self.egramInterface.egramPage(currentUser), width=12, pady=3)
         egramButton.pack()
 
         # Logout section
-        logoutButton = tk.Button(homePage, text="Logout", font=self.subtextFont, command=self.loginInterface.startPage, padx=40, pady=3)
+        def logout():
+            self.loggedIn = False
+            self.loginInterface.startPage()
+
+        logoutButton = tk.Button(homePage, text="Logout", font=self.subtextFont, command=logout, padx=40, pady=3)
         logoutButton.pack(side="bottom", anchor="se", padx=5, pady=5)
 
     # Pacing mode pages
