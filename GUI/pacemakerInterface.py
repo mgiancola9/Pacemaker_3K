@@ -27,6 +27,7 @@ class PacemakerInterface:
         # Calls polling function to detect whether pacemaker is connected, for every second.
         self.deviceStatus = False
         self.loggedIn = True
+        self.deviceStatusDisplay = None
 
     # Constantly displays status of device
     def displayDeviceStatus(self, initial=False):
@@ -49,6 +50,12 @@ class PacemakerInterface:
             self.deviceStatus = False
             if not initial:
                 messagebox.showinfo("Pacemaker Disconnected", "Pacemaker device has been disconnected!", parent=self.box)
+
+        # Finally, displays current status on home page
+        if deviceConnected:
+            self.deviceStatusDisplay.config(text="Device Status: Connected")
+        else:
+            self.deviceStatusDisplay.config(text="Device Status: Disconnected")
 
         self.box.after(1000, self.displayDeviceStatus)
 
@@ -73,10 +80,6 @@ class PacemakerInterface:
         homePage = self.app.redirectPage()
         if currentUser:
             self.currentUser = currentUser
-
-        # Starts detecting if device has been connected or not
-        self.loggedIn = True
-        self.displayDeviceStatus(initial=True)
 
         title = tk.Label(homePage, text=f"Welcome, {self.currentUser['username']}!", font=self.titleFont, bg="pink2", height=2)
         title.pack(fill=tk.BOTH)
@@ -113,8 +116,8 @@ class PacemakerInterface:
         VVIRButton.grid(row=3, column=1, padx=10, pady=5)
 
         # Device status section
-        deviceStatus = tk.Label(homePage, text="Device Status: Disconnected", font=self.subtextFont)
-        deviceStatus.pack(pady=(30, 0))
+        self.deviceStatusDisplay = tk.Label(homePage, text="Device Status: Disconnected", font=self.subtextFont)
+        self.deviceStatusDisplay.pack(pady=(30, 0))
         deviceDescription = tk.Label(homePage, text="Connect or disconnect the device from the USB port.", font=self.subtextFont)
         deviceDescription.pack(pady=(10, 10))
 
@@ -131,6 +134,10 @@ class PacemakerInterface:
 
         logoutButton = tk.Button(homePage, text="Logout", font=self.subtextFont, command=logout, padx=40, pady=3)
         logoutButton.pack(side="bottom", anchor="se", padx=5, pady=5)
+
+        # Starts detecting if device has been connected or not
+        self.loggedIn = True
+        self.displayDeviceStatus(initial=True)
 
     # Pacing mode pages
     def settingsPage(self, mode):
