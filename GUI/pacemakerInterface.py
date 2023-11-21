@@ -25,25 +25,30 @@ class PacemakerInterface:
         self.egramInterface = EgramInterface(app,box,self)
 
         # Calls polling function to detect whether pacemaker is connected, for every second.
-        self.device = False
+        self.deviceStatus = False
         self.loggedIn = True
 
     # Constantly displays status of device
-    def displayDeviceStatus(self):
+    def displayDeviceStatus(self, initial=False):
         # Do not check device if user is not logged in
         if not self.loggedIn:
             return
-
         deviceConnected = self.detectDeviceStatus()
-        # Checks if the device has been disconnected or connected as a result
-        if deviceConnected and not self.device:
-            self.device = True
-            status = "Connected"
-            messagebox.showinfo("Pacemaker Connected", "Pacemaker device has been connected!", parent=self.box)
-        elif not deviceConnected and self.device:
-            self.device = False
-            status = "Connected"
-            messagebox.showinfo("Pacemaker Disconnected", "Pacemaker device has been disconnected!", parent=self.box)
+        
+        # If device has just been connected, set device status true and inform the user
+        if deviceConnected and not self.deviceStatus:
+            self.deviceStatus = True
+            if not initial:             # If this is the initial login, do not notify the user!
+                if self.newDevice():    # If this is a new device, notify the user!
+                    messagebox.showinfo("Pacemaker Connected", "NEW Pacemaker device has been connected!", parent=self.box)
+                else:
+                    messagebox.showinfo("Pacemaker Connected", "Pacemaker device has been connected!", parent=self.box)
+
+        # If device has just been disconnected, set device status false and inform the user
+        elif not deviceConnected and self.deviceStatus:
+            self.deviceStatus = False
+            if not initial:
+                messagebox.showinfo("Pacemaker Disconnected", "Pacemaker device has been disconnected!", parent=self.box)
 
         self.box.after(1000, self.displayDeviceStatus)
 
@@ -58,6 +63,10 @@ class PacemakerInterface:
                 return True
 
         return False
+    
+    # Detects if connected device is new
+    def newDevice(self):
+        return False
 
     # Home page when user is logged in. Takes currentUser parameter to communicate between loginInterface class
     def homePage(self, currentUser = None):
@@ -67,7 +76,7 @@ class PacemakerInterface:
 
         # Starts detecting if device has been connected or not
         self.loggedIn = True
-        self.displayDeviceStatus()
+        self.displayDeviceStatus(initial=True)
 
         title = tk.Label(homePage, text=f"Welcome, {self.currentUser['username']}!", font=self.titleFont, bg="pink2", height=2)
         title.pack(fill=tk.BOTH)
