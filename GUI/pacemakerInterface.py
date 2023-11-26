@@ -5,6 +5,8 @@ from egramInterface import EgramInterface
 import serial
 import serial.tools.list_ports
 
+
+
 # Class for all pacemaker modifications
 class PacemakerInterface:
     def __init__(self, app, box, loginInterface, userStorage):
@@ -29,6 +31,9 @@ class PacemakerInterface:
         self.loggedIn = True
         self.deviceStatusDisplay = None
 
+
+    #########SERIAL CODE START ###################################################################################################################
+    
     # Constantly displays status of device
     def displayDeviceStatus(self, initial=False):
         # Do not check device if user is not logged in
@@ -40,6 +45,7 @@ class PacemakerInterface:
         if deviceConnected and self.deviceStatus == "Disconnected":
             self.deviceStatus = "Connected"
             if not initial:             # If this is the initial login, do not notify the user!
+
                 if self.newDevice():    # If this is a new device, notify the user!
                     messagebox.showinfo("Pacemaker Connected", "NEW Pacemaker device has been connected!", parent=self.box)
                 else:
@@ -70,9 +76,29 @@ class PacemakerInterface:
 
         return False
     
-    # Detects if connected device is new
+    def deviceidentifier(self):
+        # Checks each available port and sees if pacemaker device is one of them and then returns the hwid code
+        pacemakerName = "JLink CDC UART Port"
+        ports = serial.tools.list_ports.comports()
+
+        for port, desc, hwid in sorted(ports):
+            if pacemakerName in desc:
+                return str(hwid)
+            else: 
+                print ("error with device name")
+
+        return ""
+    
     def newDevice(self):
-        return False
+        device_name = self.deviceidentifier()
+        if device_name in self.currentUser['Devices']:
+            return False
+        
+        #if it isn't in the list, add it
+        self.currentUser['Devices'].append(device_name)
+        return True
+
+    #########SERIAL CODE END ###################################################################################################################
 
     # Home page when user is logged in. Takes currentUser parameter to communicate between loginInterface class
     def homePage(self, currentUser = None, newLogin=False):
