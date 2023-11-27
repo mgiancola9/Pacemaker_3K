@@ -1,6 +1,5 @@
 import tkinter as tk
-# from tkinter import messagebox
-# from tkinter import ttk
+from tkinter import ttk
 
 class RunInterface:
     def __init__(self, app, box, pacemakerInterface):
@@ -18,12 +17,41 @@ class RunInterface:
         self.app = app
         self.pacemakerInterface = pacemakerInterface
 
-    # Page to display egram graph, passed with currentUser to communicate with the pacemakerInterface class
+    # Page to run pacemaker and display egram
     def runPage(self, currentUser):
         runPage = self.app.redirectPage()
         self.currentUser = currentUser
 
-        # Create the egram graph (add code here to create the graph)
+        title = tk.Label(runPage, text=f"Activate Pacemaker", font=self.titleFont, bg="spring green", height=2)
+        title.pack(fill=tk.BOTH)
 
+        # Top frame to select and run modes, and display egram
+        runFrame = tk.Frame(runPage)
+        runFrame.pack(side="top", fill="x", pady=(20,0), padx=(5,5))
+
+        # Drop down menu to select menu to run
+        modes = ["VOO", "VVI", "AOO", "AAI", "VVIR", "VOOR", "AAIR", "AOOR"]
+        initalMessage = tk.StringVar(runFrame)
+        initalMessage.set("Select a specified mode") 
+        
+        selectMode = tk.OptionMenu(runFrame, initalMessage, *modes)
+        selectMode.config(width=20) 
+        selectMode.pack(side="left", padx=5, pady=5)
+
+        # Activate the egram graphs
+        def runEgram():
+            print("egram")
+
+        egramButton = tk.Button(runFrame, text="Activate Egram", command=runEgram, font=self.subtextFont, padx=20, pady=3)
+        egramButton.pack(side="right", padx=5, pady=5)
+
+        # Run the pacemaker
+        def runPacemaker():
+            print("run")
+
+        runButton = tk.Button(runFrame, text="Run mode", command=runPacemaker, font=self.subtextFont, padx=40, pady=3)
+        runButton.pack(side="bottom", padx=5, pady=5)
+
+        # Back button
         backButton = tk.Button(runPage, text="Back", font=self.subtextFont, command=self.pacemakerInterface.homePage, padx=40, pady=3)
         backButton.pack(side="bottom", anchor="sw", padx=5, pady=5)
