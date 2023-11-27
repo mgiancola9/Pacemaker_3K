@@ -103,8 +103,8 @@ class PacemakerInterface:
         # Functions for slider changes
         def LRLHChange(value, LorH):
             value = float(value)
-            # if LorH == "HYST" and value < 30:
-            #     roundedValue = 0
+            if LorH == "HYST" and value < 30:
+                roundedValue = 0
             if 30 <= value < 50:
                 roundedValue = round(value / 5) * 5
             elif 50 <= value < 90:
@@ -115,11 +115,10 @@ class PacemakerInterface:
             modeValues[LorH] = roundedValue
             if LorH == "LRL":
                 lrlLabel.config(text=f"LRL: {roundedValue} ppm")
-            # elif LorH == "HYST":
-            #     hystLabel.config(text=f"HYST: {roundedValue} ppm")
+            elif LorH == "HYST":
+                hystLabel.config(text=f"HYST: {roundedValue} ppm")
 
         # VPW and APW update when the slider changes
-        # Updated for ass 2: program vals = 1-30ms old was (.1-1.9), incrememt by 1ms old was .1 (no 0.05 now), nominal = 1ms was 0.4
         def VAPWChange(value, VorA):
             value = float(value)
             if value <= 30:  # extra round to keep out fp rounding errors
@@ -132,7 +131,6 @@ class PacemakerInterface:
                 vpwLabel.config(text=f"VPW: {roundedValue} ms")
 
         # AS and VS update when the slider changes
-        # Updated for ass 2, now simple 0-5V interval with .1 increments
         def AVSensChange(value, VorA):
             value = float(value)
             if 0 <= value <= 5:
@@ -145,7 +143,6 @@ class PacemakerInterface:
                 vsLabel.config(text=f"VS: {roundedValue} V")
 
         # AA and VA update when the slider changes
-        # Updated for ass 2, now simple 0-5V interval with .1 increments
         def VAAmpChange(value, VorA):
             value = float(value)
             if 0 <= value <= 5 :
@@ -308,12 +305,12 @@ class PacemakerInterface:
 
         # shared VVI and AAI slider
         if mode == "VVI" or mode == "AAI" or mode == "VVIR" or mode == "AAIR":
-            # #hysterisis slider
-            # hystLabel = tk.Label(settingsPage, text=f"HYST: {modeValues['HYST']} ppm")
-            # hystLabel.pack(pady=(10,0))
-
-            # hystSlider = ttk.Scale(settingsPage, from_=0, to=175, length=200, orient="horizontal", value=modeValues["HYST"], command=lambda value:LRLHChange(value, "HYST"))
-            # hystSlider.pack()
+            # Hysterisis slider
+            hystLabel = tk.Label(slidersContainer, text=f"HYST: {modeValues['HYST']} ppm")
+            hystLabel.grid(row=row, column=col, pady=(8, 0))
+            hystSlider = ttk.Scale(slidersContainer, from_=0, to=175, length=200, orient="horizontal", value=modeValues["HYST"], command=lambda value:LRLHChange(value, "HYST"))
+            hystSlider.grid(row=row+1, column=col, padx=20)
+            updateRowCol()
 
             # rate smoothing slider
             rsLabel = tk.Label(slidersContainer, text=f"RS: {modeValues['RS']} %")
