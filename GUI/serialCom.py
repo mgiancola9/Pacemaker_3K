@@ -17,7 +17,7 @@ class SerialCom:
         # Holds if a user is currently logged in
         self.loggedIn = True
 
-        #
+        # Holds a reference to the device status display to modify
         self.deviceStatusDisplay = None
 
     # Constantly displays status of device
