@@ -62,6 +62,9 @@ class RunInterface:
             elif mode == "Select a specified mode":
                 messagebox.showinfo("Run Unsuccessful", "Select a mode before running the pacemaker.", parent=self.box)
                 return
+            
+            # Write programmable parameters to the board
+            self.serialCom.writeToPacemaker(currentUser, mode)
 
             messagebox.showinfo("Run Successful", f"{mode} is now running on the pacemaker.", parent=self.box)
 

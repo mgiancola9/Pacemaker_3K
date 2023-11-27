@@ -1,6 +1,7 @@
 from tkinter import messagebox
 import serial
 import serial.tools.list_ports
+import struct
 
 # Class for all serial communication functionalities
 class SerialCom:
@@ -51,13 +52,15 @@ class SerialCom:
         self.box.after(1000, self.displayDeviceStatus)
 
     # Constantly checks whether device is connected or disconnected
-    def deviceIdentifier(self):
+    def deviceIdentifier(self, needCom=False):
         # Checks each available port and sees if pacemaker device is one of them
         pacemakerName = "JLink CDC UART Port"
         ports = serial.tools.list_ports.comports()
 
         for port, desc, hwid in sorted(ports):
-            if pacemakerName in desc:
+            if pacemakerName in desc and needCom:
+                return port
+            elif pacemakerName in desc:
                 return True, str(hwid)
 
         return False, ""
@@ -71,3 +74,76 @@ class SerialCom:
         # If the current device is not in the list, add it to history of used devices
         self.pacemakerInterface.currentUser['Devices'].append(deviceID)
         return True
+    
+    # Converts the mode from a string to a number to be sent to the pacemaker
+    def modeToNumber(self, mode):
+        modes = {
+            'VOO': 1,
+            'VVI': 2,
+            'AOO': 3,
+            'AAI': 4,
+            'VOOR': 5,
+            'VVIR': 6,
+            'AOOR': 7,
+            'AAIR': 8
+        }
+
+        return modes[mode]
+    
+    # Pack all needed parameter and return
+    def packParameters(self, user, mode):
+        packet = []
+        modeInNum = self.modeToNumber(mode)
+
+        b0 = b'\x00'                            # Parity bit
+        b1 = b'\x00'                            # Serial mode. 0 for run mode, 1 for egram mode
+        b2 = struct.pack('B', modeInNum)
+        b3 = struct.pack('B', user['LRL'])
+        b4 = struct.pack('B', user['URL'])
+
+        
+        b5 = struct.pack('B', user['MSR'])
+        b6 = struct.pack('f', user['A_AMPLITUDE'])
+        b7 = struct.pack('f', user['V_AMPLITUDE'])
+        b8 = struct.pack('B', user['A_WIDTH'])
+        b9 = struct.pack('B', user['V_WIDTH'])
+        b10 = struct.pack('f', user['A_SENSITIVITY'])
+        b11 = struct.pack('f', user['V_SENSITIVITY'])
+        b12 = struct.pack('H', user['VRP'])
+        b13 = struct.pack('H', user['ARP'])
+        b14 = struct.pack('B', user['ACTIV'])
+        b15 = struct.pack('B', user['REACT_TIME'])
+        b16 = struct.pack('B', user['RESPONSE_FAC'])
+        b17 = struct.pack('B', user['RECOVERY_TIME'])
+        
+        packet.append(b0)
+        packet.append(b1)
+        packet.append(b2)
+        packet.append(b3)
+        packet.append(b4)
+        packet.append(b5)
+        packet.append(b6)
+        packet.append(b7)
+        packet.append(b8)
+        packet.append(b9)
+        packet.append(b10)
+        packet.append(b11)
+        packet.append(b12)
+        packet.append(b13)
+        packet.append(b14)
+        packet.append(b15)
+        packet.append(b16)
+        packet.append(b17)
+
+        return packet
+    
+    def writeToPacemaker(self, user, mode):
+        # Pack values and establish serial connection
+        packet = self.packParameters(user, mode)
+        COM = self.deviceIdentifier(needCom=True)
+
+        ser = serial.Serial(COM,115200)
+        ser.write(b''.join(packet))
+        print('Data has been written: ', packet)
+
+        # Recieve values from pacemaker and check if it was transmitted correctly
