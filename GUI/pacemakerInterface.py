@@ -2,10 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
 from egramInterface import EgramInterface
-import serial
-import serial.tools.list_ports
-
-
+from serialCom import SerialCom
 
 # Class for all pacemaker modifications
 class PacemakerInterface:
@@ -25,67 +22,7 @@ class PacemakerInterface:
         self.loginInterface = loginInterface
         self.userStorage = userStorage
         self.egramInterface = EgramInterface(app,box,self)
-
-        # Calls polling function to detect whether pacemaker is connected, for every second.
-        self.deviceStatus = "Disconnected"
-        self.loggedIn = True
-        self.deviceStatusDisplay = None
-
-
-    #########SERIAL CODE START ###################################################################################################################
-    
-    # Constantly displays status of device
-    def displayDeviceStatus(self, initial=False):
-        # Do not check device if user is not logged in
-        if not self.loggedIn:
-            return
-        deviceConnected, deviceID = self.deviceIdentifier()
-        
-        # If device has just been connected, set device status true and inform the user
-        if deviceConnected and self.deviceStatus == "Disconnected":
-            self.deviceStatus = "Connected"
-            if not initial:             # If this is the initial login, do not notify the user!
-
-                if self.newDevice():    # If this is a new device, notify the user!
-                    messagebox.showinfo("Pacemaker Connected", "NEW Pacemaker device has been connected!", parent=self.box)
-                else:
-                    messagebox.showinfo("Pacemaker Connected", "Pacemaker device has been connected!", parent=self.box)
-
-        # If device has just been disconnected, set device status false and inform the user
-        elif not deviceConnected and self.deviceStatus == "Connected":
-            self.deviceStatus = "Disconnected"
-            if not initial:
-                messagebox.showinfo("Pacemaker Disconnected", "Pacemaker device has been disconnected!", parent=self.box)
-
-        # Finally, displays current status on home page
-        deviceLabelExists = self.deviceStatusDisplay.winfo_exists()
-        if deviceLabelExists:
-            self.deviceStatusDisplay.config(text=f"Device Status: {self.deviceStatus}", fg='green' if self.deviceStatus == 'Connected' else 'red')
-
-        self.box.after(1000, self.displayDeviceStatus)
-
-    # Constantly checks whether device is connected or disconnected
-    def deviceIdentifier(self):
-        # Checks each available port and sees if pacemaker device is one of them
-        pacemakerName = "JLink CDC UART Port"
-        ports = serial.tools.list_ports.comports()
-
-        for port, desc, hwid in sorted(ports):
-            if pacemakerName in desc:
-                return True, str(hwid)
-
-        return False, ""
-    
-    def newDevice(self):
-        deviceStatus, deviceID = self.deviceIdentifier()
-        if deviceID in self.currentUser['Devices']:
-            return False
-        
-        #if it isn't in the list, add it
-        self.currentUser['Devices'].append(deviceID)
-        return True
-
-    #########SERIAL CODE END ###################################################################################################################
+        self.serialCom = SerialCom(box, self)
 
     # Home page when user is logged in. Takes currentUser parameter to communicate between loginInterface class
     def homePage(self, currentUser = None, newLogin=False):
@@ -127,9 +64,9 @@ class PacemakerInterface:
         VVIRButton = tk.Button(buttonsContainer, text="VVIR", font=self.subtextFont, width=12, pady=3, command=lambda: self.settingsPage("VVIR"))
         VVIRButton.grid(row=3, column=1, padx=10, pady=5)
 
-        # Device status section
-        self.deviceStatusDisplay = tk.Label(homePage, text=f"Device Status: {self.deviceStatus}", font=self.subtextFont, fg='green' if self.deviceStatus == 'Connected' else 'red')
-        self.deviceStatusDisplay.pack(pady=(30, 0))
+        # Device status section, given as reference to serialCom so it can modify the value
+        self.serialCom.deviceStatusDisplay = tk.Label(homePage, text=f"Device Status: {self.serialCom.deviceStatus}", font=self.subtextFont, fg='green' if self.serialCom.deviceStatus == 'Connected' else 'red')
+        self.serialCom.deviceStatusDisplay.pack(pady=(30, 0))
         deviceDescription = tk.Label(homePage, text="Connect or disconnect the device from the USB port.", font=self.subtextFont)
         deviceDescription.pack(pady=(10, 10))
 
@@ -141,7 +78,7 @@ class PacemakerInterface:
 
         # Logout section
         def logout():
-            self.loggedIn = False
+            self.serialCom.loggedIn = False
             self.loginInterface.startPage()
 
         logoutButton = tk.Button(homePage, text="Logout", font=self.subtextFont, command=logout, padx=40, pady=3)
@@ -149,8 +86,8 @@ class PacemakerInterface:
 
         # Starts detecting if device has been connected or not
         if newLogin:
-            self.loggedIn = True
-            self.displayDeviceStatus(initial=True)
+            self.serialCom.loggedIn = True
+            self.serialCom.displayDeviceStatus(initial=True)
 
     # Pacing mode pages
     def settingsPage(self, mode):

@@ -133,7 +133,7 @@ class LoginInterface:
             # Log new user in
             newUser = self.userStorage.addNewUser(username,password)
             self.pacemakerInterface.homePage(newUser,True)
-            messagebox.showinfo("Registration Successful", username + " has been registered!", parent=self.box)
+            # messagebox.showinfo("Registration Successful", username + " has been registered!", parent=self.box)
 
         registerButton = tk.Button(registerPage, text="Register", font=self.subtextFont, command=registerUser, padx=40, pady=3)
         registerButton.pack()
