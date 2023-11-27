@@ -76,7 +76,7 @@ class PacemakerInterface:
 
         return False
     
-    def deviceidentifier(self):
+    def deviceIdentifier(self):
         # Checks each available port and sees if pacemaker device is one of them and then returns the hwid code
         pacemakerName = "JLink CDC UART Port"
         ports = serial.tools.list_ports.comports()
@@ -90,12 +90,12 @@ class PacemakerInterface:
         return ""
     
     def newDevice(self):
-        device_name = self.deviceidentifier()
-        if device_name in self.currentUser['Devices']:
+        deviceName = self.deviceIdentifier()
+        if deviceName in self.currentUser['Devices']:
             return False
         
         #if it isn't in the list, add it
-        self.currentUser['Devices'].append(device_name)
+        self.currentUser['Devices'].append(deviceName)
         return True
 
     #########SERIAL CODE END ###################################################################################################################
