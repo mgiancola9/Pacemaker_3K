@@ -39,7 +39,7 @@ class PacemakerInterface:
         # Do not check device if user is not logged in
         if not self.loggedIn:
             return
-        deviceConnected = self.detectDeviceStatus()
+        deviceConnected, deviceID = self.deviceIdentifier()
         
         # If device has just been connected, set device status true and inform the user
         if deviceConnected and self.deviceStatus == "Disconnected":
@@ -65,37 +65,24 @@ class PacemakerInterface:
         self.box.after(1000, self.displayDeviceStatus)
 
     # Constantly checks whether device is connected or disconnected
-    def detectDeviceStatus(self):
+    def deviceIdentifier(self):
         # Checks each available port and sees if pacemaker device is one of them
         pacemakerName = "JLink CDC UART Port"
         ports = serial.tools.list_ports.comports()
 
         for port, desc, hwid in sorted(ports):
             if pacemakerName in desc:
-                return True
+                return True, str(hwid)
 
-        return False
-    
-    def deviceIdentifier(self):
-        # Checks each available port and sees if pacemaker device is one of them and then returns the hwid code
-        pacemakerName = "JLink CDC UART Port"
-        ports = serial.tools.list_ports.comports()
-
-        for port, desc, hwid in sorted(ports):
-            if pacemakerName in desc:
-                return str(hwid)
-            else: 
-                print ("error with device name")
-
-        return ""
+        return False, ""
     
     def newDevice(self):
-        deviceName = self.deviceIdentifier()
-        if deviceName in self.currentUser['Devices']:
+        deviceStatus, deviceID = self.deviceIdentifier()
+        if deviceID in self.currentUser['Devices']:
             return False
         
         #if it isn't in the list, add it
-        self.currentUser['Devices'].append(deviceName)
+        self.currentUser['Devices'].append(deviceID)
         return True
 
     #########SERIAL CODE END ###################################################################################################################
