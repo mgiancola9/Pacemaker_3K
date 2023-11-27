@@ -2,7 +2,7 @@ import tkinter as tk
 # from tkinter import messagebox
 # from tkinter import ttk
 
-class EgramInterface:
+class RunInterface:
     def __init__(self, app, box, pacemakerInterface):
         # Sets up frame to put all components on
         self.box = box
@@ -19,11 +19,11 @@ class EgramInterface:
         self.pacemakerInterface = pacemakerInterface
 
     # Page to display egram graph, passed with currentUser to communicate with the pacemakerInterface class
-    def egramPage(self, currentUser):
-        egramPage = self.app.redirectPage()
+    def runPage(self, currentUser):
+        runPage = self.app.redirectPage()
         self.currentUser = currentUser
 
         # Create the egram graph (add code here to create the graph)
 
-        backButton = tk.Button(egramPage, text="Back", font=self.subtextFont, command=self.pacemakerInterface.homePage, padx=40, pady=3)
+        backButton = tk.Button(runPage, text="Back", font=self.subtextFont, command=self.pacemakerInterface.homePage, padx=40, pady=3)
         backButton.pack(side="bottom", anchor="sw", padx=5, pady=5)

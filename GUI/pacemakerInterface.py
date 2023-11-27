@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
-from egramInterface import EgramInterface
+from runInterface import RunInterface
 from serialCom import SerialCom
 
 # Class for all pacemaker modifications
@@ -21,7 +21,7 @@ class PacemakerInterface:
         self.app = app
         self.loginInterface = loginInterface
         self.userStorage = userStorage
-        self.egramInterface = EgramInterface(app,box,self)
+        self.runInterface = RunInterface(app,box,self)
         self.serialCom = SerialCom(box, self)
 
     # Home page when user is logged in. Takes currentUser parameter to communicate between loginInterface class
@@ -71,10 +71,10 @@ class PacemakerInterface:
         deviceDescription.pack(pady=(10, 10))
 
         # Egram section
-        egramDescription = tk.Label(homePage, text="Develop egram data.", font=self.subtextFont)
-        egramDescription.pack(pady=(20, 10))
-        egramButton = tk.Button(homePage, text="egram", font=self.subtextFont, command=lambda currentUser=self.currentUser: self.egramInterface.egramPage(currentUser), width=12, pady=3)
-        egramButton.pack()
+        runDescription = tk.Label(homePage, text="Activate pacemaker for a specified mode.", font=self.subtextFont)
+        runDescription.pack(pady=(20, 10))
+        runButton = tk.Button(homePage, text="Run pacemaker", font=self.subtextFont, command=lambda currentUser=self.currentUser: self.runInterface.runPage(currentUser), width=15, pady=3)
+        runButton.pack()
 
         # Logout section
         def logout():
@@ -368,10 +368,3 @@ class PacemakerInterface:
 
         backButton = tk.Button(buttonFrame, text="Back", font=self.subtextFont, padx=40, pady=3, command=self.homePage)
         backButton.pack(side="left", padx=5, pady=5)
-
-        # Code for flashing to the Pacemaker
-        def flashCode():
-            messagebox.showinfo("Settings Flash Successful", "Settings have been flashed to the Pacemaker!", parent=self.box)
-
-        flashButton = tk.Button(buttonFrame, text="Flash to Pacemaker", font=self.subtextFont, command=flashCode, padx=40, pady=3)
-        flashButton.pack(side="bottom", padx=5, pady=5)
