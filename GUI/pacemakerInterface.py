@@ -21,8 +21,8 @@ class PacemakerInterface:
         self.app = app
         self.loginInterface = loginInterface
         self.userStorage = userStorage
-        self.runInterface = RunInterface(app,box,self)
         self.serialCom = SerialCom(box, self)
+        self.runInterface = RunInterface(app,box,self,self.serialCom)
 
     # Home page when user is logged in. Takes currentUser parameter to communicate between loginInterface class
     def homePage(self, currentUser = None, newLogin=False):
