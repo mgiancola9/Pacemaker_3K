@@ -93,16 +93,16 @@ class SerialCom:
         b4 = struct.pack('B', user['URL'])                      # Upper rate limit
         b5 = struct.pack('B', self.parameter(user,'REACT'))     # Reaction time
         b6 = struct.pack('B', self.parameter(user,'RESPF'))     # Response factor RF in simulink
-        b7 = struct.pack('d', self.parameter(user,'W_THRESH'))  # Const 0.5
-        b8 = struct.pack('d', self.parameter(user,'J_THRESH'))  # Const 1.75
-        b9 = struct.pack('d', self.parameter(user,'R_THRESH'))  # Const 3
+        b7 = struct.pack('d', self.parameter(user,'W_THRESH'))  # Walk threshold Const 0.5
+        b8 = struct.pack('d', self.parameter(user,'J_THRESH'))  # Jog threshold Const 1.75
+        b9 = struct.pack('d', self.parameter(user,'R_THRESH'))  # Run threshold Const 3
         b10 = struct.pack('B', self.parameter(user,'RECOVT'))   # Recovery time
-        b11 = struct.pack('B', self.parameter(user,'W_MSR'))      # Walk max sensing rate
-        b12 = struct.pack('B', self.parameter(user,'J_MSR'))      # Jog max sensing rate
-        b13 = struct.pack('B', self.parameter(user,'R_MSR'))      # Run max sensing rate
-        b14 = struct.pack('d', self.parameter(user,'W_HYST'))     # Walk hysterisis
-        b15 = struct.pack('d', self.parameter(user,'J_HYST'))     # Jog hysterisis
-        b16 = struct.pack('d', self.parameter(user,'R_HYST'))     # Run hysterisis
+        b11 = struct.pack('B', self.parameter(user,'W_MSR'))    # Walk max sensing rate
+        b12 = struct.pack('B', self.parameter(user,'J_MSR'))    # Jog max sensing rate
+        b13 = struct.pack('B', self.parameter(user,'R_MSR'))    # Run max sensing rate
+        b14 = struct.pack('d', self.parameter(user,'W_HYST'))   # Walk hysterisis
+        b15 = struct.pack('d', self.parameter(user,'J_HYST'))   # Jog hysterisis
+        b16 = struct.pack('d', self.parameter(user,'R_HYST'))   # Run hysterisis
         b17 = struct.pack('f', self.parameter(user,'AA'))       # Atrial amp
         b18 = struct.pack('B', self.parameter(user,'APW'))      # Atrial pulse width
         b19 = struct.pack('H', self.parameter(user,'ARP'))      # Atrial refractory period
@@ -144,7 +144,7 @@ class SerialCom:
         return packet, sum
     
     # Sum all of the values written to the pacemaker and received back
-    def sumPacemakerData(self, data, sum):
+    def sumPacemakerData(self, data):
 
         parity = struct.unpack("B", data[0:1])[0]
         serialMode = struct.unpack("B", data[1:2])[0]
@@ -176,22 +176,26 @@ class SerialCom:
 
         return sum
     
-    def writeToPacemaker(self, user):
+    def writeToPacemaker(self, user, mode):
         # Pack values
         packet, writeSum = self.packParameters(user)
         COM = self.deviceIdentifier(needCom=True)
 
         # Establish serial connection and write to board
-        ser = serial.Serial(COM,115200)
+        ser = serial.Serial(COM, 115200, timeout=5)
         ser.write(b''.join(packet))
         print('Data has been written: ', packet)
 
         # Recieve values from board and check if it was transmitted correctly
-        data = ser.read(100)
+        data = ser.read(81)
+        if not data:
+            messagebox.showinfo("Error Write", "There was an error writing the parameters to the pacemaker.", parent=self.box)
+            return
         readSum = self.sumPacemakerData(data)
 
         # Notify user whether the data has been written successfully or not
         if readSum == writeSum:
+            messagebox.showinfo("Run Successful", f"{mode} is now running on the pacemaker.", parent=self.box)
             messagebox.showinfo("Write Successful", "Parameters have been written to pacemaker!", parent=self.box)
         else:
             messagebox.showinfo("Error Write", "There was an error writing the parameters to the pacemaker.", parent=self.box) 

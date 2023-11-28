@@ -101,10 +101,8 @@ class PacemakerInterface:
         title.pack(fill=tk.BOTH)
 
         # Functions for slider changes
-        def LRLHChange(value, LorH):
+        def LRLChange(value):
             value = float(value)
-            if LorH == "HYST" and value < 30:
-                roundedValue = 0
             if 30 <= value < 50:
                 roundedValue = round(value / 5) * 5
             elif 50 <= value < 90:
@@ -112,11 +110,8 @@ class PacemakerInterface:
             elif 90 <= value <= 175:
                 roundedValue = round(value / 5) * 5
 
-            modeValues[LorH] = roundedValue
-            if LorH == "LRL":
-                lrlLabel.config(text=f"LRL: {roundedValue} ppm")
-            elif LorH == "HYST":
-                hystLabel.config(text=f"HYST: {roundedValue} ppm")
+            modeValues["LRL"] = roundedValue
+            lrlLabel.config(text=f"LRL: {roundedValue} ppm")
 
         # VPW and APW update when the slider changes
         def VAPWChange(value, VorA):
@@ -154,38 +149,140 @@ class PacemakerInterface:
             elif VorA == "VA":
                 vaLabel.config(text=f"VA: {roundedValue} V")
 
-        # Updates ACTIV for slider. Also is used to initialize string for label, since it will be as int at first
-        def ACTIVChange(value, Activ, initial=False):
+        # Return the current mode to be put for the initial label
+        def initialTHRESHChange(value, word=False):
+            if value == [0.5, 1.75, 3]:
+                return "V-Low" if word else 0.75
+            elif value == [1, 2.75, 4]:
+                return "Low" if word else 1
+            elif value == [1.5, 3.75, 5]:
+                return "Med-Low" if word else 1.75
+            elif value == [2, 4.75, 6]:
+                return "Med" if word else 2
+            elif value == [2.5, 5.75, 7]:
+                return "Med-High" if word else 2.75
+            elif value == [3, 6.75, 8]:
+                return "High" if word else 3
+            elif value == [3.5, 7.75, 9]:
+                return "V-High" if word else 3.75
+
+        # Updates Thresh for slider
+        def THRESHChange(value):
             value = float(value)
             if 0.75 <= value < 1:
-                roundedValue = 0.75
+                roundedValue = [0.5, 1.75, 3]
                 mode = "V-Low"
-            if 1 <= value < 1.5:
-                roundedValue = 1
+            elif 1 <= value < 1.5:
+                roundedValue = [1, 2.75, 4]
                 mode = "Low"
-            if 1.5 <= value < 2:
-                roundedValue = 1.75
+            elif 1.5 <= value < 2:
+                roundedValue = [1.5, 3.75, 5]
                 mode = "Med-Low"
-            if 2 <= value < 2.5:
-                roundedValue = 2
+            elif 2 <= value < 2.5:
+                roundedValue = [2, 4.75, 6]
                 mode = "Med"
-            if 2.5 <= value < 3:
-                roundedValue = 2.75
+            elif 2.5 <= value < 3:
+                roundedValue = [2.5, 5.75, 7]
                 mode = "Med-High"
-            if 3 <= value < 3.5:
-                roundedValue = 3
+            elif 3 <= value < 3.5:
+                roundedValue = [3, 6.75, 8]
                 mode = "High"
-            if value >= 3.5:
-                roundedValue = 3.75
+            elif value >= 3.5:
+                roundedValue = [3.5, 7.75, 9]
                 mode = "V-High"
-
-            # If this is the initial call of this method for the label, return the mode to be labelled
-            if initial:
-                return mode
             
-            # Else, modify the slider and relabel the label as usual
-            modeValues[Activ] = roundedValue
-            activLabel.config(text=f"ACTIV: {mode} V")
+            modeValues["W_THRESH"], modeValues["J_THRESH"], modeValues["R_THRESH"] = roundedValue
+            threshLabel.config(text=f"THRESH: {mode} V")
+
+        # Return the current mode to be put for the initial label
+        def initialHYSTChange(value, word=False):
+            if value == [0.5, 1.75, 3]:
+                return "V-Low" if word else 0.75
+            elif value == [1, 2.75, 4]:
+                return "Low" if word else 1
+            elif value == [1.5, 3.75, 5]:
+                return "Med-Low" if word else 1.75
+            elif value == [2, 4.75, 6]:
+                return "Med" if word else 2
+            elif value == [2.5, 5.75, 7]:
+                return "Med-High" if word else 2.75
+            elif value == [3, 6.75, 8]:
+                return "High" if word else 3
+            elif value == [3.5, 7.75, 9]:
+                return "V-High" if word else 3.75
+
+        # Updates Hyst for slider
+        def HYSTChange(value):
+            value = float(value)
+            if 0.75 <= value < 1:
+                roundedValue = [0.5, 1.75, 3]
+                mode = "V-Low"
+            elif 1 <= value < 1.5:
+                roundedValue = [1, 2.75, 4]
+                mode = "Low"
+            elif 1.5 <= value < 2:
+                roundedValue = [1.5, 3.75, 5]
+                mode = "Med-Low"
+            elif 2 <= value < 2.5:
+                roundedValue = [2, 4.75, 6]
+                mode = "Med"
+            elif 2.5 <= value < 3:
+                roundedValue = [2.5, 5.75, 7]
+                mode = "Med-High"
+            elif 3 <= value < 3.5:
+                roundedValue = [3, 6.75, 8]
+                mode = "High"
+            elif value >= 3.5:
+                roundedValue = [3.5, 7.75, 9]
+                mode = "V-High"
+            
+            modeValues["W_HYST"], modeValues["J_HYST"], modeValues["R_HYST"] = roundedValue
+            hystLabel.config(text=f"HYST: {mode} ppm")
+
+        # Return the current mode to be put for the initial label
+        def initialMSRChange(value, word=False):
+            if value == [0.5, 1.75, 3]:
+                return "V-Low" if word else 0.75
+            elif value == [1, 2.75, 4]:
+                return "Low" if word else 1
+            elif value == [1.5, 3.75, 5]:
+                return "Med-Low" if word else 1.75
+            elif value == [2, 4.75, 6]:
+                return "Med" if word else 2
+            elif value == [2.5, 5.75, 7]:
+                return "Med-High" if word else 2.75
+            elif value == [3, 6.75, 8]:
+                return "High" if word else 3
+            elif value == [3.5, 7.75, 9]:
+                return "V-High" if word else 3.75
+
+        # Updates MSR for slider
+        def MSRChange(value):
+            value = float(value)
+            if 0.75 <= value < 1:
+                roundedValue = [0.5, 1.75, 3]
+                mode = "V-Low"
+            elif 1 <= value < 1.5:
+                roundedValue = [1, 2.75, 4]
+                mode = "Low"
+            elif 1.5 <= value < 2:
+                roundedValue = [1.5, 3.75, 5]
+                mode = "Med-Low"
+            elif 2 <= value < 2.5:
+                roundedValue = [2, 4.75, 6]
+                mode = "Med"
+            elif 2.5 <= value < 3:
+                roundedValue = [2.5, 5.75, 7]
+                mode = "Med-High"
+            elif 3 <= value < 3.5:
+                roundedValue = [3, 6.75, 8]
+                mode = "High"
+            elif value >= 3.5:
+                roundedValue = [3.5, 7.75, 9]
+                mode = "V-High"
+            
+            modeValues["W_MSR"], modeValues["J_MSR"], modeValues["R_MSR"] = roundedValue
+            msrLabel.config(text=f"MSR: {mode} ppm")
 
         # General function for when the slider changes
         def generalChange(value, increment, type, unit):
@@ -205,8 +302,6 @@ class PacemakerInterface:
                     roundedValue = 25
                     modeValues[type] = roundedValue
                 rsLabel.config(text=f"RS: {roundedValue} {unit}")
-            elif type == "MSR":
-                msrLabel.config(text=f"MSR: {roundedValue} {unit}")
             elif type == "REACT":
                 reactLabel.config(text=f"REACT: {roundedValue} {unit}")
             elif type == "RESPF":
@@ -230,7 +325,7 @@ class PacemakerInterface:
         # LRL slider for all modes
         lrlLabel = tk.Label(slidersContainer, text=f"LRL: {modeValues['LRL']} ppm")
         lrlLabel.grid(row=row, column=col, pady=(8, 0))
-        lrlSlider = ttk.Scale(slidersContainer, from_=30, to=175, length=200, orient="horizontal", value=modeValues["LRL"], command=lambda value: LRLHChange(value, "LRL"))
+        lrlSlider = ttk.Scale(slidersContainer, from_=30, to=175, length=200, orient="horizontal", value=modeValues["LRL"], command=lambda value: LRLChange(value))
         lrlSlider.grid(row=row+1, column=col, padx=20)
         updateRowCol()
 
@@ -306,9 +401,9 @@ class PacemakerInterface:
         # shared VVI and AAI slider
         if mode == "VVI" or mode == "AAI" or mode == "VVIR" or mode == "AAIR":
             # Hysterisis slider
-            hystLabel = tk.Label(slidersContainer, text=f"HYST: {modeValues['HYST']} ppm")
+            hystLabel = tk.Label(slidersContainer, text=f"HYST: {initialHYSTChange([modeValues['W_HYST'], modeValues['J_HYST'], modeValues['R_HYST']], word=True)} ppm")
             hystLabel.grid(row=row, column=col, pady=(8, 0))
-            hystSlider = ttk.Scale(slidersContainer, from_=0, to=175, length=200, orient="horizontal", value=modeValues["HYST"], command=lambda value:LRLHChange(value, "HYST"))
+            hystSlider = ttk.Scale(slidersContainer, from_=0.75, to=3.75, length=200, orient="horizontal", value=initialHYSTChange([modeValues['W_HYST'], modeValues['J_HYST'], modeValues['R_HYST']]), command=lambda value:HYSTChange(value))
             hystSlider.grid(row=row+1, column=col, padx=20)
             updateRowCol()
 
@@ -321,17 +416,17 @@ class PacemakerInterface:
 
         #exclusive for AAIR, VVIR, AOOR, VOOR
         if mode == "VOOR" or mode == "AOOR" or mode == "VVIR" or mode == "AAIR":
-            msrLabel = tk.Label(slidersContainer, text=f"MSR: {modeValues['MSR']} ppm")
+            msrLabel = tk.Label(slidersContainer, text=f"MSR: {initialMSRChange([modeValues['W_MSR'], modeValues['J_MSR'], modeValues['R_MSR']], word=True)} ppm")
             msrLabel.grid(row=row, column=col, pady=(8, 0))
-            msrSlider = ttk.Scale(slidersContainer, from_=50, to=175, length=200, orient="horizontal", value=modeValues["MSR"], command=lambda value: generalChange(value, 5, "MSR", "ppm"))
+            msrSlider = ttk.Scale(slidersContainer, from_=0.75, to=3.75, length=200, orient="horizontal", value=initialMSRChange([modeValues['W_MSR'], modeValues['J_MSR'], modeValues['R_MSR']]), command=lambda value: MSRChange(value))
             msrSlider.grid(row=row+1, column=col, padx=20)
             updateRowCol()
 
-            # Calls ACTIVChange initially to receive string on what the current value is, instead of an int
-            activLabel = tk.Label(slidersContainer, text=f"ACTIV: {ACTIVChange(modeValues['ACTIV'], 'ACTIV', True)} V")
-            activLabel.grid(row=row, column=col, pady=(8, 0))
-            activSlider = ttk.Scale(slidersContainer, from_=0.75, to=3.75, length=200, orient="horizontal", value=modeValues["ACTIV"], command=lambda value: ACTIVChange(value, "ACTIV"))
-            activSlider.grid(row=row+1, column=col, padx=20)
+            # Calls THRESHChange initially to receive string on what the current value is, instead of an int
+            threshLabel = tk.Label(slidersContainer, text=f"THRESH: {initialTHRESHChange([modeValues['W_THRESH'], modeValues['J_THRESH'], modeValues['R_THRESH']], word=True)} V")
+            threshLabel.grid(row=row, column=col, pady=(8, 0))
+            threshSlider = ttk.Scale(slidersContainer, from_=0.75, to=3.75, length=200, orient="horizontal", value=initialTHRESHChange([modeValues['W_THRESH'], modeValues['J_THRESH'], modeValues['R_THRESH']]), command=lambda value: THRESHChange(value))
+            threshSlider.grid(row=row+1, column=col, padx=20)
             updateRowCol()
 
             reactLabel = tk.Label(slidersContainer, text=f"REACT: {modeValues['REACT']} sec")

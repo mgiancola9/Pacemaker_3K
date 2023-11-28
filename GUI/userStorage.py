@@ -6,21 +6,27 @@ class UserStorage:
         # Defining constants for pacing modes based on nominal values
         self.LRL_VALUE = 60
         self.URL_VALUE = 120
-        self.AA_VALUE = 5 #was 3.5
-        self.APW_VALUE = 1 #was 0.4 (updated)
+        self.AA_VALUE = 5
+        self.APW_VALUE = 1 
         self.VA_VALUE = 5
-        self.VPW_VALUE = 1 #was 0.4 
+        self.VPW_VALUE = 1 
         self.VRP_VALUE = 320
         self.ARP_VALUE = 250
         self.AS_VALUE = 0.75
         self.VS_VALUE = 2.5
         self.PVARP_VALUE = 250
-        self.HYST_VALUE = 60
+        self.W_HYST_VALUE = 0.5
+        self.J_HYST_VALUE = 1.75
+        self.R_HYST_VALUE = 3
         self.RATESM_VALUE = 0
 
         #ass 2 additions:
-        self.MSR_VALUE = 120
-        self.ACTIV_VALUE = 2
+        self.W_MSR_VALUE = 0.5
+        self.J_MSR_VALUE = 1.75
+        self.R_MSR_VALUE = 3
+        self.W_THRESH_VALUE = 0.5
+        self.J_THRESH_VALUE = 1.75
+        self.R_THRESH_VALUE = 3
         self.REACT_VALUE = 30
         self.RESPF_VALUE = 8
         self.RECOVT_VALUE = 5
@@ -76,13 +82,13 @@ class UserStorage:
                     "username": username,
                     "password": password,
                     "VOO": {"MODE": 1, "LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "VA": self.VA_VALUE, "VPW": self.VPW_VALUE},
-                    "VVI": {"MODE": 2, "LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "VA": self.VA_VALUE, "VPW": self.VPW_VALUE, "VS": self.VS_VALUE, "VRP": self.VRP_VALUE, "HYST": self.HYST_VALUE, "RS": self.RATESM_VALUE},
+                    "VVI": {"MODE": 2, "LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "VA": self.VA_VALUE, "VPW": self.VPW_VALUE, "VS": self.VS_VALUE, "VRP": self.VRP_VALUE, "W_HYST": self.W_HYST_VALUE, "J_HYST": self.J_HYST_VALUE, "R_HYST": self.R_HYST_VALUE, "RS": self.RATESM_VALUE},
                     "AOO": {"MODE": 3, "LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "AA": self.AA_VALUE, "APW": self.APW_VALUE},
-                    "AAI": {"MODE": 4, "LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "AA": self.AA_VALUE, "APW": self.APW_VALUE, "AS": self.AS_VALUE, "ARP": self.ARP_VALUE, "PVARP": self.PVARP_VALUE, "HYST": self.HYST_VALUE, "RS": self.RATESM_VALUE},
-                    "VOOR": {"MODE": 5, "LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "VA": self.VA_VALUE, "VPW": self.VPW_VALUE, "MSR": self.MSR_VALUE, "ACTIV": self.ACTIV_VALUE, "REACT": self.REACT_VALUE, "RESPF": self.RESPF_VALUE, "RECOVT": self.RECOVT_VALUE},
-                    "VVIR": {"MODE": 6, "LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "VA": self.VA_VALUE, "VPW": self.VPW_VALUE, "VS": self.VS_VALUE, "VRP": self.VRP_VALUE, "HYST": self.HYST_VALUE, "RS": self.RATESM_VALUE, "MSR": self.MSR_VALUE, "ACTIV": self.ACTIV_VALUE, "REACT": self.REACT_VALUE, "RESPF": self.RESPF_VALUE, "RECOVT": self.RECOVT_VALUE},
-                    "AOOR": {"MODE": 7, "LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "AA": self.AA_VALUE, "APW": self.APW_VALUE, "MSR": self.MSR_VALUE, "ACTIV": self.ACTIV_VALUE, "REACT": self.REACT_VALUE, "RESPF": self.RESPF_VALUE, "RECOVT": self.RECOVT_VALUE},
-                    "AAIR": {"MODE": 8, "LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "AA": self.AA_VALUE, "APW": self.APW_VALUE, "AS": self.AS_VALUE, "ARP": self.ARP_VALUE, "PVARP": self.PVARP_VALUE, "HYST": self.HYST_VALUE, "RS": self.RATESM_VALUE, "MSR": self.MSR_VALUE, "ACTIV": self.ACTIV_VALUE, "REACT": self.REACT_VALUE, "RESPF": self.RESPF_VALUE, "RECOVT": self.RECOVT_VALUE},
+                    "AAI": {"MODE": 4, "LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "AA": self.AA_VALUE, "APW": self.APW_VALUE, "AS": self.AS_VALUE, "ARP": self.ARP_VALUE, "PVARP": self.PVARP_VALUE, "W_HYST": self.W_HYST_VALUE, "J_HYST": self.J_HYST_VALUE, "R_HYST": self.R_HYST_VALUE, "RS": self.RATESM_VALUE},
+                    "VOOR": {"MODE": 5, "LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "VA": self.VA_VALUE, "VPW": self.VPW_VALUE, "W_MSR": self.W_MSR_VALUE, "J_MSR": self.J_MSR_VALUE, "R_MSR": self.R_MSR_VALUE, "W_THRESH": self.W_THRESH_VALUE, "J_THRESH": self.J_THRESH_VALUE, "R_THRESH": self.R_THRESH_VALUE, "REACT": self.REACT_VALUE, "RESPF": self.RESPF_VALUE, "RECOVT": self.RECOVT_VALUE},
+                    "VVIR": {"MODE": 6, "LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "VA": self.VA_VALUE, "VPW": self.VPW_VALUE, "VS": self.VS_VALUE, "VRP": self.VRP_VALUE, "W_HYST": self.W_HYST_VALUE, "J_HYST": self.J_HYST_VALUE, "R_HYST": self.R_HYST_VALUE, "RS": self.RATESM_VALUE, "W_MSR": self.W_MSR_VALUE, "J_MSR": self.J_MSR_VALUE, "R_MSR": self.R_MSR_VALUE, "W_THRESH": self.W_THRESH_VALUE, "J_THRESH": self.J_THRESH_VALUE, "R_THRESH": self.R_THRESH_VALUE, "REACT": self.REACT_VALUE, "RESPF": self.RESPF_VALUE, "RECOVT": self.RECOVT_VALUE},
+                    "AOOR": {"MODE": 7, "LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "AA": self.AA_VALUE, "APW": self.APW_VALUE, "W_MSR": self.W_MSR_VALUE, "J_MSR": self.J_MSR_VALUE, "R_MSR": self.R_MSR_VALUE, "W_THRESH": self.W_THRESH_VALUE, "J_THRESH": self.J_THRESH_VALUE, "R_THRESH": self.R_THRESH_VALUE, "REACT": self.REACT_VALUE, "RESPF": self.RESPF_VALUE, "RECOVT": self.RECOVT_VALUE},
+                    "AAIR": {"MODE": 8, "LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "AA": self.AA_VALUE, "APW": self.APW_VALUE, "AS": self.AS_VALUE, "ARP": self.ARP_VALUE, "PVARP": self.PVARP_VALUE, "W_HYST": self.W_HYST_VALUE, "J_HYST": self.J_HYST_VALUE, "R_HYST": self.R_HYST_VALUE, "RS": self.RATESM_VALUE, "W_MSR": self.W_MSR_VALUE, "J_MSR": self.J_MSR_VALUE, "R_MSR": self.R_MSR_VALUE, "W_THRESH": self.W_THRESH_VALUE, "J_THRESH": self.J_THRESH_VALUE, "R_THRESH": self.R_THRESH_VALUE, "REACT": self.REACT_VALUE, "RESPF": self.RESPF_VALUE, "RECOVT": self.RECOVT_VALUE},
                     "Devices": []
                 }
 
