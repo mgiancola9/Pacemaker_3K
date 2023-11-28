@@ -155,28 +155,35 @@ class SerialCom:
         return packet, sum
     
     #write a function that reads the data from the pacemaker and unpacks it to the variables corresponding to the dictrionary keys as above
-    def readFromPacemaker(self, user):
-        VRP_rev = struct.unpack("d", data[0:8])[0]
-        VentWidth_rev = struct.unpack("h", data[8:10])[0]
-        URL_rev = struct.unpack("d", data[10:18])[0]
-        LRL_rev = struct.unpack("d", data[18:26])[0]
-        ARP_rev = struct.unpack("d", data[26:34])[0]
-        mode_rev = struct.unpack("h", data[34:36])[0]
-        VAmplitude_rev = struct.unpack("d", data[36:44])[0]
-        AAmplitude_rev = struct.unpack("d", data[44:52])[0]
-        RecoveryTime_rev = struct.unpack("d", data[52:60])[0]
-        ResponseFactor_rev = struct.unpack("d", data[60:68])[0]
-        ReactionTime_rev = struct.unpack("d", data[68:76])[0]
-        ActivityThreshold_rev = struct.unpack("d", data[76:84])[0]
-        AtrWidth_rev = struct.unpack("h", data[84:86])[0]
-        MSR_rev = struct.unpack("d", data[86:94])[0]
-        VentSensitivity_rev = struct.unpack("d", data[94:102])[0]
-        AtrSensitivity_rev = struct.unpack("d", data[102:110])[0]
+    def sumPacemakerData(self, data, sum):
 
-        sum1 = VRP_rev + VentWidth_rev + URL_rev + LRL_rev + ARP_rev + mode_rev + VAmplitude_rev + AAmplitude_rev + RecoveryTime_rev + ResponseFactor_rev + ReactionTime_rev + ActivityThreshold_rev + AtrWidth_rev + MSR_rev + VentSensitivity_rev + AtrSensitivity_rev
-        sum2 = VRP_value + VPW_value + URL_value + LRL_value + ARP_value + mode_value + VA_value + AA_value + RCT_value + RF_value + RT_value + at_value + APW_value + MSR_value + VS_value + AS_value
-        if not(sum1 == sum2):
-            diff_device()
+        data = struct.unpack("B", data[0:1])[0]
+        LRL = struct.unpack("B", data[1:2])[0]
+        URL = struct.unpack("B", data[2:3])[0]
+        REACT = struct.unpack("B", data[3:4])[0]
+        RESPF = struct.unpack("B", data[4:5])[0]
+        W_THRESH = struct.unpack("d", data[5:13])[0]
+        J_THRESH = struct.unpack("d", data[13:21])[0]
+        R_THRESH = struct.unpack("d", data[21:29])[0]
+        RECOVT = struct.unpack("B", data[29:30])[0]
+        W_MSR = struct.unpack("B", data[30:31])[0]
+        J_MSR = struct.unpack("B", data[31:32])[0]
+        R_MSR = struct.unpack("B", data[32:33])[0]
+        W_HYST = struct.unpack("B", data[33:34])[0]
+        J_HYST = struct.unpack("B", data[34:35])[0]
+        R_HYST = struct.unpack("B", data[35:36])[0]
+        AA = struct.unpack("f", data[36:40])[0]
+        APW = struct.unpack("B", data[40:41])[0]
+        ARP = struct.unpack("H", data[41:43])[0]
+        AS = struct.unpack("B", data[43:44])[0]
+        VA = struct.unpack("f", data[44:48])[0]
+        VPW = struct.unpack("B", data[48:49])[0]
+        VRP = struct.unpack("H", data[49:51])[0]
+        VS = struct.unpack("B", data[51:52])[0]
+
+        sum = data + LRL + URL + REACT + RESPF + W_THRESH + J_THRESH + R_THRESH + RECOVT + W_MSR + J_MSR + R_MSR + W_HYST + J_HYST + R_HYST + AA + APW + ARP + AS + VA + VPW + VRP + VS
+
+        return sum
     
     def writeToPacemaker(self, user):
         # Pack values and establish serial connection
