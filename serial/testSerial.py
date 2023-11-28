@@ -21,7 +21,13 @@ def writeSerial(value):
     bytes = struct.pack('d', value)
     ser.write(bytes)
 
-value = readSerial()
-writeSerial(value)
+def testSerial():
+    b0 = b'\x00'
+    b1 = b'\x00'
+    b2 = b'\x01'
 
-    
+    packet = [b0,b1,b2]
+    ser.write(b''.join(packet))
+
+# value = readSerial()
+# writeSerial(value)
