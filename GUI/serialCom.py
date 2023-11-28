@@ -75,6 +75,7 @@ class SerialCom:
         self.pacemakerInterface.currentUser['Devices'].append(deviceID)
         return True
     
+    #function that determines if the parameter is a part of the required mode 
     def parameter(self, user, parameter):
         if parameter in user:
             return user[parameter]
@@ -91,23 +92,37 @@ class SerialCom:
         b3 = struct.pack('B', user['LRL'])
         b4 = struct.pack('B', user['URL'])
         b5 = struct.pack('B', self.parameter(user,'REACT'))
+        b6 = struct.pack('B', self.parameter(user,'RESPF')) #response factor RF in simulink
+
+        b7 = struct.pack('d', self.parameter(user,'W_THRESH')) #const 0.5
+        b8 = struct.pack('d', self.parameter(user,'J_THRESH')) #const 1.75
+        b9 = struct.pack('d', self.parameter(user,'R_Thresh')) #const 3
+        #recovery time 
+        b10 = struct.pack('B', self.parameter(user,'RECOVT'))
+        #W_MSR
+        b11 = struct.pack('B', self.parameter(user,'MSR'))
+        #J_MSR
+        b12 = struct.pack('B', self.parameter(user,'MSR'))
+        #R_MSR
+        b13 = struct.pack('B', self.parameter(user,'MSR'))
+        #W_Hys
+        b14 = struct.pack('B', self.parameter(user,'HYST'))
+        #J_Hys
+        b15 = struct.pack('B', self.parameter(user,'HYST'))
+        #R_Hys
+        b16 = struct.pack('B', self.parameter(user,'HYST'))
+        #ATRIUM
+        b17 = struct.pack('f', self.parameter(user,'AA')) #Atrial amp
+        b18 = struct.pack('B', self.parameter(user,'APW')) #Atrial pulse width
+        b19 = struct.pack('H', self.parameter(user,'ARP')) #Atrial refractory period
+        b20 = struct.pack('B', self.parameter(user,'AS')) #Atrial sensitivity
+        #VENTRICLE
+        b21 = struct.pack('f', self.parameter(user,'VA')) #Ventricular amp
+        b22 = struct.pack('B', self.parameter(user,'VPW')) #Ventricular pulse width
+        b23 = struct.pack('H', self.parameter(user,'VRP'))  #Ventricular refractory period
+        b24 = struct.pack('B', self.parameter(user,'VS')) #Ventricular sensitivity
 
 
-
-
-        # Bits that still have to be fixed
-        b6 = struct.pack('f', user['A_AMPLITUDE'])
-        b7 = struct.pack('f', user['V_AMPLITUDE'])
-        b8 = struct.pack('B', user['A_WIDTH'])
-        b9 = struct.pack('B', user['V_WIDTH'])
-        b10 = struct.pack('f', user['A_SENSITIVITY'])
-        b11 = struct.pack('f', user['V_SENSITIVITY'])
-        b12 = struct.pack('H', user['VRP'])
-        b13 = struct.pack('H', user['ARP'])
-        b14 = struct.pack('B', user['ACTIV'])
-        b15 = struct.pack('B', user['REACT_TIME'])
-        b16 = struct.pack('B', user['RESPONSE_FAC'])
-        b17 = struct.pack('B', user['RECOVERY_TIME'])
         
         packet.append(b0)
         packet.append(b1)
@@ -127,8 +142,18 @@ class SerialCom:
         packet.append(b15)
         packet.append(b16)
         packet.append(b17)
+        packet.append(b18)
+        packet.append(b19)
+        packet.append(b20)
+        packet.append(b21)
+        packet.append(b22)
+        packet.append(b23)
+        packet.append(b24)
 
         return packet
+    
+    #write a function that reads the data from the pacemaker and unpacks it to the variables corresponding to the dictrionary keys as above
+
     
     def writeToPacemaker(self, user):
         # Pack values and establish serial connection
