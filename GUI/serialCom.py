@@ -75,34 +75,25 @@ class SerialCom:
         self.pacemakerInterface.currentUser['Devices'].append(deviceID)
         return True
     
-    # Converts the mode from a string to a number to be sent to the pacemaker
-    def modeToNumber(self, mode):
-        modes = {
-            'VOO': 1,
-            'VVI': 2,
-            'AOO': 3,
-            'AAI': 4,
-            'VOOR': 5,
-            'VVIR': 6,
-            'AOOR': 7,
-            'AAIR': 8
-        }
-
-        return modes[mode]
+    def parameter(self, user, parameter):
+        if parameter in user:
+            return user[parameter]
+        else:
+            return 0
     
     # Pack all needed parameter and return
-    def packParameters(self, user, mode):
+    def packParameters(self, user):
         packet = []
-        modeInNum = self.modeToNumber(mode)
 
         b0 = b'\x00'                            # Parity bit
         b1 = b'\x00'                            # Serial mode. 0 for run mode, 1 for egram mode
-        b2 = struct.pack('B', modeInNum)
+        b2 = struct.pack('B', user['MODE'])
         b3 = struct.pack('B', user['LRL'])
         b4 = struct.pack('B', user['URL'])
+        b5 = struct.pack('B', self.parameter(user,'MSR'))
 
-        
-        b5 = struct.pack('B', user['MSR'])
+
+        # Bits that still have to be fixed
         b6 = struct.pack('f', user['A_AMPLITUDE'])
         b7 = struct.pack('f', user['V_AMPLITUDE'])
         b8 = struct.pack('B', user['A_WIDTH'])
@@ -137,9 +128,9 @@ class SerialCom:
 
         return packet
     
-    def writeToPacemaker(self, user, mode):
+    def writeToPacemaker(self, user):
         # Pack values and establish serial connection
-        packet = self.packParameters(user, mode)
+        packet = self.packParameters(user)
         COM = self.deviceIdentifier(needCom=True)
 
         ser = serial.Serial(COM,115200)

@@ -75,15 +75,14 @@ class UserStorage:
         newUser = {
                     "username": username,
                     "password": password,
-                    "AOO": {"LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "AA": self.AA_VALUE, "APW": self.APW_VALUE},
-                    "VOO": {"LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "VA": self.VA_VALUE, "VPW": self.VPW_VALUE},
-                    "AAI": {"LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "AA": self.AA_VALUE, "APW": self.APW_VALUE, "AS": self.AS_VALUE, "ARP": self.ARP_VALUE, "PVARP": self.PVARP_VALUE, "HYST": self.HYST_VALUE, "RS": self.RATESM_VALUE},
-                    "VVI": {"LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "VA": self.VA_VALUE, "VPW": self.VPW_VALUE, "VS": self.VS_VALUE, "VRP": self.VRP_VALUE, "HYST": self.HYST_VALUE, "RS": self.RATESM_VALUE},
-                    "AOOR": {"LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "AA": self.AA_VALUE, "APW": self.APW_VALUE, "MSR": self.MSR_VALUE, "ACTIV": self.ACTIV_VALUE, "REACT": self.REACT_VALUE, "RESPF": self.RESPF_VALUE, "RECOVT": self.RECOVT_VALUE},
-                    "VOOR": {"LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "VA": self.VA_VALUE, "VPW": self.VPW_VALUE, "MSR": self.MSR_VALUE, "ACTIV": self.ACTIV_VALUE, "REACT": self.REACT_VALUE, "RESPF": self.RESPF_VALUE, "RECOVT": self.RECOVT_VALUE},
-                    "AAIR": {"LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "AA": self.AA_VALUE, "APW": self.APW_VALUE, "AS": self.AS_VALUE, "ARP": self.ARP_VALUE, "PVARP": self.PVARP_VALUE, "HYST": self.HYST_VALUE, "RS": self.RATESM_VALUE, "MSR": self.MSR_VALUE, "ACTIV": self.ACTIV_VALUE, "REACT": self.REACT_VALUE, "RESPF": self.RESPF_VALUE, "RECOVT": self.RECOVT_VALUE},
-                    "VVIR": {"LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "VA": self.VA_VALUE, "VPW": self.VPW_VALUE, "VS": self.VS_VALUE, "VRP": self.VRP_VALUE, "HYST": self.HYST_VALUE, "RS": self.RATESM_VALUE, "MSR": self.MSR_VALUE, "ACTIV": self.ACTIV_VALUE, "REACT": self.REACT_VALUE, "RESPF": self.RESPF_VALUE, "RECOVT": self.RECOVT_VALUE},
-                    "lastDeviceUsed": None,
+                    "VOO": {"MODE": 1, "LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "VA": self.VA_VALUE, "VPW": self.VPW_VALUE},
+                    "VVI": {"MODE": 2, "LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "VA": self.VA_VALUE, "VPW": self.VPW_VALUE, "VS": self.VS_VALUE, "VRP": self.VRP_VALUE, "HYST": self.HYST_VALUE, "RS": self.RATESM_VALUE},
+                    "AOO": {"MODE": 3, "LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "AA": self.AA_VALUE, "APW": self.APW_VALUE},
+                    "AAI": {"MODE": 4, "LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "AA": self.AA_VALUE, "APW": self.APW_VALUE, "AS": self.AS_VALUE, "ARP": self.ARP_VALUE, "PVARP": self.PVARP_VALUE, "HYST": self.HYST_VALUE, "RS": self.RATESM_VALUE},
+                    "VOOR": {"MODE": 5, "LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "VA": self.VA_VALUE, "VPW": self.VPW_VALUE, "MSR": self.MSR_VALUE, "ACTIV": self.ACTIV_VALUE, "REACT": self.REACT_VALUE, "RESPF": self.RESPF_VALUE, "RECOVT": self.RECOVT_VALUE},
+                    "VVIR": {"MODE": 6, "LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "VA": self.VA_VALUE, "VPW": self.VPW_VALUE, "VS": self.VS_VALUE, "VRP": self.VRP_VALUE, "HYST": self.HYST_VALUE, "RS": self.RATESM_VALUE, "MSR": self.MSR_VALUE, "ACTIV": self.ACTIV_VALUE, "REACT": self.REACT_VALUE, "RESPF": self.RESPF_VALUE, "RECOVT": self.RECOVT_VALUE},
+                    "AOOR": {"MODE": 7, "LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "AA": self.AA_VALUE, "APW": self.APW_VALUE, "MSR": self.MSR_VALUE, "ACTIV": self.ACTIV_VALUE, "REACT": self.REACT_VALUE, "RESPF": self.RESPF_VALUE, "RECOVT": self.RECOVT_VALUE},
+                    "AAIR": {"MODE": 8, "LRL": self.LRL_VALUE, "URL": self.URL_VALUE, "AA": self.AA_VALUE, "APW": self.APW_VALUE, "AS": self.AS_VALUE, "ARP": self.ARP_VALUE, "PVARP": self.PVARP_VALUE, "HYST": self.HYST_VALUE, "RS": self.RATESM_VALUE, "MSR": self.MSR_VALUE, "ACTIV": self.ACTIV_VALUE, "REACT": self.REACT_VALUE, "RESPF": self.RESPF_VALUE, "RECOVT": self.RECOVT_VALUE},
                     "Devices": []
                 }
 

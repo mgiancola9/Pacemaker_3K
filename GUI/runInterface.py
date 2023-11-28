@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import messagebox
-import serial
 
 class RunInterface:
     def __init__(self, app, box, pacemakerInterface, serialCom):
@@ -64,7 +63,7 @@ class RunInterface:
                 return
             
             # Write programmable parameters to the board
-            self.serialCom.writeToPacemaker(currentUser, mode)
+            self.serialCom.writeToPacemaker(self.currentUser[mode])
 
             messagebox.showinfo("Run Successful", f"{mode} is now running on the pacemaker.", parent=self.box)
 
