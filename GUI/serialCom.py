@@ -90,7 +90,9 @@ class SerialCom:
         b2 = struct.pack('B', user['MODE'])
         b3 = struct.pack('B', user['LRL'])
         b4 = struct.pack('B', user['URL'])
-        b5 = struct.pack('B', self.parameter(user,'MSR'))
+        b5 = struct.pack('B', self.parameter(user,'REACT'))
+
+
 
 
         # Bits that still have to be fixed
