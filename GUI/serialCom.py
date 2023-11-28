@@ -122,7 +122,8 @@ class SerialCom:
         b23 = struct.pack('H', self.parameter(user,'VRP'))  #Ventricular refractory period
         b24 = struct.pack('B', self.parameter(user,'VS')) #Ventricular sensitivity
 
-
+        #sum all of the values that were packed
+        sum = user['MODE'] + user['LRL'] + user['URL'] + self.parameter(user,'REACT') + self.parameter(user,'RESPF') + self.parameter(user,'W_THRESH') + self.parameter(user,'J_THRESH') + self.parameter(user,'R_Thresh') + self.parameter(user,'RECOVT') + self.parameter(user,'MSR') + self.parameter(user,'MSR') + self.parameter(user,'MSR') + self.parameter(user,'HYST') + self.parameter(user,'HYST') + self.parameter(user,'HYST') + self.parameter(user,'AA') + self.parameter(user,'APW') + self.parameter(user,'ARP') + self.parameter(user,'AS') + self.parameter(user,'VA') + self.parameter(user,'VPW') + self.parameter(user,'VRP') + self.parameter(user,'VS')
         
         packet.append(b0)
         packet.append(b1)
@@ -150,10 +151,32 @@ class SerialCom:
         packet.append(b23)
         packet.append(b24)
 
-        return packet
+        
+        return packet, sum
     
     #write a function that reads the data from the pacemaker and unpacks it to the variables corresponding to the dictrionary keys as above
+    def readFromPacemaker(self, user):
+        VRP_rev = struct.unpack("d", data[0:8])[0]
+        VentWidth_rev = struct.unpack("h", data[8:10])[0]
+        URL_rev = struct.unpack("d", data[10:18])[0]
+        LRL_rev = struct.unpack("d", data[18:26])[0]
+        ARP_rev = struct.unpack("d", data[26:34])[0]
+        mode_rev = struct.unpack("h", data[34:36])[0]
+        VAmplitude_rev = struct.unpack("d", data[36:44])[0]
+        AAmplitude_rev = struct.unpack("d", data[44:52])[0]
+        RecoveryTime_rev = struct.unpack("d", data[52:60])[0]
+        ResponseFactor_rev = struct.unpack("d", data[60:68])[0]
+        ReactionTime_rev = struct.unpack("d", data[68:76])[0]
+        ActivityThreshold_rev = struct.unpack("d", data[76:84])[0]
+        AtrWidth_rev = struct.unpack("h", data[84:86])[0]
+        MSR_rev = struct.unpack("d", data[86:94])[0]
+        VentSensitivity_rev = struct.unpack("d", data[94:102])[0]
+        AtrSensitivity_rev = struct.unpack("d", data[102:110])[0]
 
+        sum1 = VRP_rev + VentWidth_rev + URL_rev + LRL_rev + ARP_rev + mode_rev + VAmplitude_rev + AAmplitude_rev + RecoveryTime_rev + ResponseFactor_rev + ReactionTime_rev + ActivityThreshold_rev + AtrWidth_rev + MSR_rev + VentSensitivity_rev + AtrSensitivity_rev
+        sum2 = VRP_value + VPW_value + URL_value + LRL_value + ARP_value + mode_value + VA_value + AA_value + RCT_value + RF_value + RT_value + at_value + APW_value + MSR_value + VS_value + AS_value
+        if not(sum1 == sum2):
+            diff_device()
     
     def writeToPacemaker(self, user):
         # Pack values and establish serial connection
