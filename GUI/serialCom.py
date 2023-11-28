@@ -97,12 +97,12 @@ class SerialCom:
         b8 = struct.pack('d', self.parameter(user,'J_THRESH'))  # Jog threshold
         b9 = struct.pack('d', self.parameter(user,'R_THRESH'))  # Run threshold
         b10 = struct.pack('H', self.parameter(user,'RECOVT'))   # Recovery time
-        b11 = struct.pack('H', self.parameter(user,'J_MSR'))    # Walk max sensing rate
-        b12 = struct.pack('H', self.parameter(user,'R_MSR'))    # Jog max sensing rate
-        b13 = struct.pack('H', self.parameter(user,'W_MSR'))    # Run max sensing rate
-        b14 = struct.pack('d', self.parameter(user,'J_HYST'))   # Walk hysterisis
-        b15 = struct.pack('d', self.parameter(user,'R_HYST'))   # Jog hysterisis
-        b16 = struct.pack('d', self.parameter(user,'W_HYST'))   # Run hysterisis
+        b11 = struct.pack('H', 80)    # Walk max sensing rate
+        b12 = struct.pack('H', 120)    # Jog max sensing rate
+        b13 = struct.pack('H', 160)    # Run max sensing rate
+        b14 = struct.pack('d', 0.75)   # Walk hysterisis
+        b15 = struct.pack('d', 1.75)   # Jog hysterisis
+        b16 = struct.pack('d', 2.75)   # Run hysterisis
         b17 = struct.pack('f', self.parameter(user,'AA'))       # Atrial amp
         b18 = struct.pack('H', self.parameter(user,'APW'))      # Atrial pulse width
         b19 = struct.pack('H', self.parameter(user,'ARP'))      # Atrial refractory period
@@ -191,4 +191,4 @@ class SerialCom:
         if readSum == writeSum:
             messagebox.showinfo("Run Successful", f"{mode} is now running on the pacemaker.", parent=self.box)
         else:
-            messagebox.showinfo("Error Write", "There was an error writing the parameters to the pacemaker.", parent=self.box) 
+            # messagebox.showinfo("Error Write", "There was an error writing the parameters to the pacemaker.", parent=self.box) 
