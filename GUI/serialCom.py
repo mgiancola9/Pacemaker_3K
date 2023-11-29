@@ -122,7 +122,7 @@ class SerialCom:
         b24 = struct.pack('f', self.parameter(user,'VS'))       # Ventricular sensitivity
 
         # Sum all of the values that were packed
-        sum = user['MODE'] + user['LRL'] + user['URL'] + self.parameter(user,'REACT') + self.parameter(user,'RESPF') + self.parameter(user,'W_THRESH') + self.parameter(user,'J_THRESH') + self.parameter(user,'R_THRESH') + self.parameter(user,'RECOVT') + self.parameter(user,'J_MSR') + self.parameter(user,'R_MSR') + self.parameter(user,'W_MSR') + self.parameter(user,'J_HYST') + self.parameter(user,'R_HYST') + self.parameter(user,'W_HYST') + self.parameter(user,'AA') + self.parameter(user,'APW') + self.parameter(user,'ARP') + self.parameter(user,'AS') + self.parameter(user,'VA') + self.parameter(user,'VPW') + self.parameter(user,'VRP') + self.parameter(user,'VS')
+        sum = user['MODE'] + user['LRL'] + self.regulateURL(user, mode) + self.parameter(user,'REACT') + self.parameter(user,'RESPF') + self.parameter(user,'W_THRESH') + self.parameter(user,'J_THRESH') + self.parameter(user,'R_THRESH') + self.parameter(user,'RECOVT') + self.parameter(user,'J_MSR') + self.parameter(user,'R_MSR') + self.parameter(user,'W_MSR') + self.parameter(user,'J_HYST') + self.parameter(user,'R_HYST') + self.parameter(user,'W_HYST') + self.parameter(user,'AA') + self.parameter(user,'APW') + self.parameter(user,'ARP') + self.parameter(user,'AS') + self.parameter(user,'VA') + self.parameter(user,'VPW') + self.parameter(user,'VRP') + self.parameter(user,'VS')
 
         packet.append(b0)
         packet.append(b1)
