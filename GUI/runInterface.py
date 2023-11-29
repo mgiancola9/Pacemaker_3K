@@ -74,7 +74,7 @@ class RunInterface:
         self.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
         # Activate the egram graphs
-        def runEgram():
+        def runEgram(run=False):
             mode = curMode.get()
 
             # Do not run if pacemaker is not connected
@@ -84,6 +84,14 @@ class RunInterface:
             # Set default mode since egram does not care about mode
             elif mode == "Select a specified mode":
                 mode = "VOO"
+
+            # Waits for all serial com to finish up before running
+            if not run:
+                self.box.attributes("-disabled", True)
+                self.box.after(4000, lambda: runEgram(run=True))
+                return
+            else:
+                self.box.attributes("-disabled", False)
             
             # Change egram button
             egramButton.config(text="Stop Egram", command=stopEgram)
@@ -164,13 +172,8 @@ class RunInterface:
         egramButton.pack(side="right", padx=5, pady=5)
 
         # Run the pacemaker
-        def runPacemaker():
+        def runPacemaker(run=False):
             mode = curMode.get()
-
-            if self.graphOn:
-                stopEgram()
-                self.box.after(4000, runPacemaker)
-                return
 
             # Do not run if pacemaker is not connected
             if self.serialCom.deviceStatus == "Disconnected":
@@ -180,6 +183,16 @@ class RunInterface:
             elif mode == "Select a specified mode":
                 messagebox.showinfo("Run Unsuccessful", "Select a mode before running the pacemaker.", parent=self.box)
                 return
+            
+            # Waits for all serial com to finish up before running
+            if self.graphOn:
+                stopEgram()
+            if not run:
+                self.box.attributes("-disabled", True)
+                self.box.after(4000, lambda: runPacemaker(run=True))
+                return
+            else:
+                self.box.attributes("-disabled", False)
             
             # Write programmable parameters to the board
             self.serialCom.writeToPacemaker(self.currentUser[mode], mode)
