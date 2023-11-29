@@ -55,18 +55,24 @@ class RunInterface:
                 return
             
             # Create a Figure with two subplots
-            fig = Figure(figsize=(10, 4), dpi=100, facecolor='#FFFFFF')
-            ax_atrial = fig.add_subplot(131)
-            ax_ventricular = fig.add_subplot(132)
-            ax_both = fig.add_subplot(133)
+            fig = Figure(figsize=(10, 4), dpi=100, facecolor='#D3D3D3')
+            fig.subplots_adjust(wspace=0.4)
 
-            # Set labels for the x and y axes
+            # Set plots
+            ax_atrial = fig.add_subplot(131, aspect='equal')
+            ax_ventricular = fig.add_subplot(132, aspect='equal')
+            ax_both = fig.add_subplot(133, aspect='equal')
+
+            # Set labels for the x and y axes and titles
             ax_atrial.set_xlabel('Time (ms)')
             ax_atrial.set_ylabel('Voltage (mV)')
             ax_ventricular.set_xlabel('Time (ms)')
             ax_ventricular.set_ylabel('Voltage (mV)')
             ax_both.set_xlabel('Time (ms)')
             ax_both.set_ylabel('Voltage (mV)')
+            ax_atrial.set_title('Atrial Plot')
+            ax_ventricular.set_title('Ventricular Plot')
+            ax_both.set_title('Both Plots')
 
             # Create a canvas to display the Figure
             canvas = FigureCanvasTkAgg(fig, runPage)

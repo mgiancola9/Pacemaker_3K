@@ -6,7 +6,7 @@ class App:
         # Sets up GUI frame and size
         self.box = tk.Tk()
         self.box.title("Pacemaker GUI")
-        self.box.geometry("600x600")
+        self.box.geometry("1000x600")
         self.box.minsize(600, 600)
 
         # Initializes user storage to the instance of it passed in
