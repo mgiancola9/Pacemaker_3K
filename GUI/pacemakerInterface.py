@@ -110,7 +110,11 @@ class PacemakerInterface:
             elif 90 <= value <= 175:
                 roundedValue = round(value / 5) * 5
 
-            # MSRAddition = roundedValue - modeValues["LRL"]
+            if mode == "AOOR" or mode == "AAIR" or mode == "VOOR" or mode == "VVIR":
+                MSRAddition = roundedValue - modeValues["LRL"]
+                modeValues["W_MSR"] += MSRAddition 
+                modeValues["J_MSR"] += MSRAddition
+                modeValues["R_MSR"] += MSRAddition
             modeValues["LRL"] = roundedValue
             lrlLabel.config(text=f"LRL: {roundedValue} ppm")
 
