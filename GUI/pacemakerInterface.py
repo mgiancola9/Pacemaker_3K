@@ -110,6 +110,7 @@ class PacemakerInterface:
             elif 90 <= value <= 175:
                 roundedValue = round(value / 5) * 5
 
+            # MSRAddition = roundedValue - modeValues["LRL"]
             modeValues["LRL"] = roundedValue
             lrlLabel.config(text=f"LRL: {roundedValue} ppm")
 
@@ -241,44 +242,46 @@ class PacemakerInterface:
 
         # Return the current mode to be put for the initial label
         def initialMSRChange(value, word=False):
-            if value == [0.5, 1.75, 3]:
+            LRL = modeValues["LRL"]
+            if value == [LRL + 2, LRL + 20, LRL + 40]:
                 return "V-Low" if word else 0.75
-            elif value == [1, 2.75, 4]:
+            elif value == [LRL + 4, LRL + 22, LRL + 42]:
                 return "Low" if word else 1
-            elif value == [1.5, 3.75, 5]:
+            elif value == [LRL + 6, LRL + 24, LRL + 44]:
                 return "Med-Low" if word else 1.75
-            elif value == [2, 4.75, 6]:
+            elif value == [LRL + 8, LRL + 26, LRL + 46]:
                 return "Med" if word else 2
-            elif value == [2.5, 5.75, 7]:
+            elif value == [LRL + 10, LRL + 28, LRL + 48]:
                 return "Med-High" if word else 2.75
-            elif value == [3, 6.75, 8]:
+            elif value == [LRL + 12, LRL + 30, LRL + 50]:
                 return "High" if word else 3
-            elif value == [3.5, 7.75, 9]:
+            elif value == [LRL + 14, LRL + 32, LRL + 52]:
                 return "V-High" if word else 3.75
 
         # Updates MSR for slider
         def MSRChange(value):
             value = float(value)
+            LRL = modeValues["LRL"]
             if 0.75 <= value < 1:
-                roundedValue = [0.5, 1.75, 3]
+                roundedValue = [LRL + 2, LRL + 20, LRL + 40]
                 mode = "V-Low"
             elif 1 <= value < 1.5:
-                roundedValue = [1, 2.75, 4]
+                roundedValue = [LRL + 4, LRL + 22, LRL + 42]
                 mode = "Low"
             elif 1.5 <= value < 2:
-                roundedValue = [1.5, 3.75, 5]
+                roundedValue = [LRL + 6, LRL + 24, LRL + 44]
                 mode = "Med-Low"
             elif 2 <= value < 2.5:
-                roundedValue = [2, 4.75, 6]
+                roundedValue = [LRL + 8, LRL + 26, LRL + 46]
                 mode = "Med"
             elif 2.5 <= value < 3:
-                roundedValue = [2.5, 5.75, 7]
+                roundedValue = [LRL + 10, LRL + 28, LRL + 48]
                 mode = "Med-High"
             elif 3 <= value < 3.5:
-                roundedValue = [3, 6.75, 8]
+                roundedValue = [LRL + 12, LRL + 30, LRL + 50]
                 mode = "High"
             elif value >= 3.5:
-                roundedValue = [3.5, 7.75, 9]
+                roundedValue = [LRL + 14, LRL + 32, LRL + 52]
                 mode = "V-High"
             
             modeValues["W_MSR"], modeValues["J_MSR"], modeValues["R_MSR"] = roundedValue
@@ -400,13 +403,6 @@ class PacemakerInterface:
 
         # shared VVI and AAI slider
         if mode == "VVI" or mode == "AAI" or mode == "VVIR" or mode == "AAIR":
-            # Hysterisis slider
-            hystLabel = tk.Label(slidersContainer, text=f"HYST: {initialHYSTChange([modeValues['W_HYST'], modeValues['J_HYST'], modeValues['R_HYST']], word=True)} ppm")
-            hystLabel.grid(row=row, column=col, pady=(8, 0))
-            hystSlider = ttk.Scale(slidersContainer, from_=0.75, to=3.75, length=200, orient="horizontal", value=initialHYSTChange([modeValues['W_HYST'], modeValues['J_HYST'], modeValues['R_HYST']]), command=lambda value:HYSTChange(value))
-            hystSlider.grid(row=row+1, column=col, padx=20)
-            updateRowCol()
-
             # rate smoothing slider
             rsLabel = tk.Label(slidersContainer, text=f"RS: {modeValues['RS']} %")
             rsLabel.grid(row=row, column=col, pady=(8, 0))
@@ -445,6 +441,13 @@ class PacemakerInterface:
             recovtLabel.grid(row=row, column=col, pady=(8, 0))
             recovtSlider = ttk.Scale(slidersContainer, from_=2, to=16, length=200, orient="horizontal", value=modeValues["RECOVT"], command=lambda value: generalChange(value, 1, "RECOVT", "min"))
             recovtSlider.grid(row=row+1, column=col, padx=20)
+            updateRowCol()
+
+            # Hysterisis slider
+            hystLabel = tk.Label(slidersContainer, text=f"HYST: {initialHYSTChange([modeValues['W_HYST'], modeValues['J_HYST'], modeValues['R_HYST']], word=True)} ppm")
+            hystLabel.grid(row=row, column=col, pady=(8, 0))
+            hystSlider = ttk.Scale(slidersContainer, from_=0.75, to=3.75, length=200, orient="horizontal", value=initialHYSTChange([modeValues['W_HYST'], modeValues['J_HYST'], modeValues['R_HYST']]), command=lambda value:HYSTChange(value))
+            hystSlider.grid(row=row+1, column=col, padx=20)
             updateRowCol()
 
         # Bottom buttons to save and go back
