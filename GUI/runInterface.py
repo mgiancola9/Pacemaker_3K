@@ -26,6 +26,31 @@ class RunInterface:
         self.pacemakerInterface = pacemakerInterface
         self.serialCom = serialCom
 
+        # Create a Figure with two subplots
+        self.fig = Figure(figsize=(10, 4), dpi=100, facecolor='#D3D3D3')
+        self.fig.subplots_adjust(wspace=0.4)
+
+        # Set plots
+        self.ax_atrial = self.fig.add_subplot(131, aspect='equal')
+        self.ax_ventricular = self.fig.add_subplot(132, aspect='equal')
+        self.ax_both = self.fig.add_subplot(133, aspect='equal')
+
+        # Set labels for the x and y axes and titles
+        self.ax_atrial.set_xlabel('Time (ms)')
+        self.ax_atrial.set_ylabel('Voltage (mV)')
+        self.ax_ventricular.set_xlabel('Time (ms)')
+        self.ax_ventricular.set_ylabel('Voltage (mV)')
+        self.ax_both.set_xlabel('Time (ms)')
+        self.ax_both.set_ylabel('Voltage (mV)')
+        self.ax_atrial.set_title('Atrial Plot')
+        self.ax_ventricular.set_title('Ventricular Plot')
+        self.ax_both.set_title('Both Plots')
+
+        self.stopGraph = False
+        self.egramData = {'Atrial': [], 'Ventricular': []}  # Placeholder for Egram data
+        self.timer_interval = 75  # Time interval in millisecond
+        self.canvas = None
+
     # Page to run pacemaker and display egram
     def runPage(self, currentUser):
         runPage = self.app.redirectPage()
@@ -47,108 +72,73 @@ class RunInterface:
         selectMode.config(width=20) 
         selectMode.pack(side="left", padx=5, pady=5)
 
+        # Create a canvas to display the Figure
+        self.canvas = FigureCanvasTkAgg(self.fig, runPage)
+        self.canvas.draw()
+        self.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+
         # Activate the egram graphs
         def runEgram():
+            mode = curMode.get()
+
             # Do not run if pacemaker is not connected
             if self.serialCom.deviceStatus == "Disconnected":
                 messagebox.showinfo("Run Unsuccessful", "Pacemaker must be connected before displaying Egram.", parent=self.box)
                 return
+            # Do not run if a mode has not been selected
+            elif mode == "Select a specified mode":
+                messagebox.showinfo("Run Unsuccessful", "Select a mode before running the pacemaker.", parent=self.box)
+                return
             
-            # Create a Figure with two subplots
-            fig = Figure(figsize=(10, 4), dpi=100, facecolor='#D3D3D3')
-            fig.subplots_adjust(wspace=0.4)
+            startTime = datetime.now()
+            updateEgramData(mode, startTime)
 
-            # Set plots
-            ax_atrial = fig.add_subplot(131, aspect='equal')
-            ax_ventricular = fig.add_subplot(132, aspect='equal')
-            ax_both = fig.add_subplot(133, aspect='equal')
+        def updateEgramData(mode, startTime):
+            # Fetch Egram data from the pacemaker using send_parameters method
+            egramData = self.serialCom.receiveEgramData(self.currentUser[mode],mode)
 
-            # Set labels for the x and y axes and titles
-            ax_atrial.set_xlabel('Time (ms)')
-            ax_atrial.set_ylabel('Voltage (mV)')
-            ax_ventricular.set_xlabel('Time (ms)')
-            ax_ventricular.set_ylabel('Voltage (mV)')
-            ax_both.set_xlabel('Time (ms)')
-            ax_both.set_ylabel('Voltage (mV)')
-            ax_atrial.set_title('Atrial Plot')
-            ax_ventricular.set_title('Ventricular Plot')
-            ax_both.set_title('Both Plots')
+            if not self.stopGraph:
+                # Calculate the elapsed time
+                elapsed_time = datetime.now() - startTime
 
-            # Create a canvas to display the Figure
-            canvas = FigureCanvasTkAgg(fig, runPage)
-            canvas.draw()
-            canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+                # Update atrial graph
+                self.egramData['Atrial'].append((elapsed_time, egramData[0]))
+                updateSubplot(self.ax_atrial, self.egramData['Atrial'], 'Atrial')
 
-                        
-                        # Initialize data
-            # time_window = 10  # seconds
-            # update_interval = 100  # milliseconds
+                # Update ventricular graph
+                self.egramData['Ventricular'].append((elapsed_time, egramData[1]))
+                updateSubplot(self.ax_ventricular, self.egramData['Ventricular'], 'Ventricular')
 
-            # # Function to generate sample ECG data
-            # def generate_ecg_data():
-            #     t = (datetime.now() - start_time).total_seconds()
-            #     atrial_data = np.sin(2 * np.pi * t / 2)  # Replace with your atrial ECG data function
-            #     ventricular_data = 0.5 * np.sin(2 * np.pi * t / 2)  # Replace with your ventricular ECG data function
-            #     return atrial_data, ventricular_data
+                # Update both graph
+                self.egramData['Atrial'].append((elapsed_time, egramData[0]))
+                self.egramData['Ventricular'].append((elapsed_time, egramData[1]))
+                updateSubplot(self.ax_atrial, self.egramData['Atrial'], 'Atrial')
+                updateSubplot(self.ax_ventricular, self.egramData['Ventricular'], 'Ventricular')
 
-            # # Function to update the plot
-            # def update(frame):
-            #     atrial_data, ventricular_data = generate_ecg_data()
-                
-            #     # Calculate the time difference between now and when the data point was received
-            #     current_time = datetime.now()
-            #     time_difference = (current_time - start_time).total_seconds()
-                
-            #     time_data.append(time_difference)  # Use time difference as x-axis value
-            #     atrial_data_buffer.append(atrial_data)
-            #     ventricular_data_buffer.append(ventricular_data)
+                # Schedule the next update after the specified time interval
+                self.box.after(self.timer_interval, updateEgramData, mode, startTime)
 
-            #     # Update the plot data
-            #     line_atrial.set_data(time_data, atrial_data_buffer)
-            #     line_ventricular.set_data(time_data, ventricular_data_buffer)
+        def updateSubplot(axis, new_data, plot_title):
+            # Clear the axis
+            axis.clear()
 
-            #     # Adjust the x-axis limits after 10 seconds
-            #     if time_difference > time_window:
-            #         ax.set_xlim(time_difference - time_window, time_difference)
+            # Extract timestamps and data
+            timestamps, voltage_data = zip(*new_data)
 
-            #     # Update x-axis ticks with increasing time values
-            #     plt.xticks(np.arange(max(0, time_difference - time_window), time_difference + 1, 1))
+            # Calculate the elapsed time in seconds for each data point
+            elapsed_times = [(timestamp - timestamps[0]).total_seconds() for timestamp in timestamps]
 
-            #     # Update y-axis limits based on incoming data
-            #     y_min = min(min(atrial_data_buffer), min(ventricular_data_buffer))
-            #     y_max = max(max(atrial_data_buffer), max(ventricular_data_buffer))
-            #     ax.set_ylim(y_min - 0.2, y_max + 0.2)
+            # Plot the data
+            axis.plot(elapsed_times, voltage_data, 'b-')
+            axis.set_title(plot_title)
 
-            #     # Explicitly update the plot
-            #     plt.draw()
-            #     plt.pause(0.01)  # Adjust the pause duration as needed
+            # Set x-axis limits dynamically based on elapsed time
+            max_elapsed_time = max(elapsed_times)
+            min_elapsed_time = max(0, max_elapsed_time - 15)  # Keep a time frame of 50 seconds
+            axis.set_xlim(min_elapsed_time, max_elapsed_time)
 
-            #     return line_atrial, line_ventricular
-
-            # # Set up the figure and axes
-            # fig, ax = plt.subplots()
-            # ax.set_xlabel('Time (s)')
-            # ax.set_ylabel('Amplitude')
-            # ax.set_title('Real-time ECG Data')
-
-            # # Initialize plot data
-            # start_time = datetime.now()
-            # time_data = []
-            # atrial_data_buffer = []
-            # ventricular_data_buffer = []
-
-            # # Initialize the plot with empty data
-            # line_atrial, = ax.plot([], [], label='Atrial ECG', color='blue')
-            # line_ventricular, = ax.plot([], [], label='Ventricular ECG', color='red')
-
-            # ax.legend()
-            # ax.grid(True)
-
-            # # Set up the animation
-            # animation = FuncAnimation(fig, update, blit=False, interval=update_interval)
-
-            # plt.show()
-
+            # Redraw the canvas
+            self.canvas.draw()
 
         egramButton = tk.Button(runFrame, text="Activate Egram", command=runEgram, font=self.subtextFont, padx=20, pady=3)
         egramButton.pack(side="right", padx=5, pady=5)
