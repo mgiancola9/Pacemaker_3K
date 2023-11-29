@@ -212,11 +212,12 @@ class SerialCom:
         COM = self.deviceIdentifier(needCom=True)
 
         # Establish serial connection and write to board
-        ser = serial.Serial(COM, 115200, 5)
+        ser = serial.Serial(COM, 115200)
         ser.write(b''.join(packet))
-        print('Data has been written: ', packet)
+        data = self.readPacemakerData(ser, egram=True)
+        # ser.close()
         
-        return self.readPacemakerData(ser, egram=True)
+        return data
 
 
 
