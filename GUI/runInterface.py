@@ -81,10 +81,12 @@ class RunInterface:
             if self.serialCom.deviceStatus == "Disconnected":
                 messagebox.showinfo("Run Unsuccessful", "Pacemaker must be connected before displaying Egram.", parent=self.box)
                 return
-            # Do not run if a mode has not been selected
+            # Set default mode since egram does not care about mode
             elif mode == "Select a specified mode":
-                messagebox.showinfo("Run Unsuccessful", "Select a mode before running the pacemaker.", parent=self.box)
-                return
+                mode = "VOO"
+            
+            # Change egram button
+            egramButton.config(text="Stop Egram", command=stopEgram)
             
             # Clear canvis before drawing and data
             self.ax_atrial.clear()
@@ -150,6 +152,14 @@ class RunInterface:
             # Redraw the canvas
             self.canvas.draw()
 
+        # Stops egram when button clicked
+        def stopEgram(back=False):
+            egramButton.config(text="Activate Egram", command=runEgram)
+            self.stopGraph = True
+            self.graphOn = False
+            if back:
+                self.pacemakerInterface.homePage()
+
         egramButton = tk.Button(runFrame, text="Activate Egram", command=runEgram, font=self.subtextFont, padx=20, pady=3)
         egramButton.pack(side="right", padx=5, pady=5)
 
@@ -158,8 +168,7 @@ class RunInterface:
             mode = curMode.get()
 
             if self.graphOn:
-                self.stopGraph = True
-                self.graphOn = False
+                stopEgram()
                 self.box.after(4000, runPacemaker)
                 return
 
@@ -179,5 +188,5 @@ class RunInterface:
         runButton.pack(side="bottom", padx=5, pady=5)
 
         # Back button
-        backButton = tk.Button(runPage, text="Back", font=self.subtextFont, command=self.pacemakerInterface.homePage, padx=40, pady=3)
+        backButton = tk.Button(runPage, text="Back", font=self.subtextFont, command=lambda: stopEgram(back=True), padx=40, pady=3)
         backButton.pack(side="bottom", anchor="sw", padx=5, pady=5)
