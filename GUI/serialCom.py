@@ -75,22 +75,31 @@ class SerialCom:
         self.pacemakerInterface.currentUser['Devices'].append(deviceID)
         return True
     
-    #function that determines if the parameter is a part of the required mode 
+    # Function that determines if the parameter is a part of the required mode 
     def parameter(self, user, parameter):
         if parameter in user:
             return user[parameter]
         else:
             return 0
     
+    # Special function to force URL to be a specific value based on its difference with URL
+    def regulateURL(self, user, mode):
+        if mode == "AOO" or mode == "AAI" or mode == "VOO" or mode == "VVI" and (user['URL'] <= user['LRL']):
+            return user['LRL'] + 10
+        elif mode == "AOOR" or mode == "AAIR" or mode == "VOOR" or mode == "VVIR" and (user['URL'] - user['LRL']) < 60:
+            return user['R_MSR']
+        else:
+            return user['URL']
+    
     # Pack all needed parameter and return
-    def packParameters(self, user):
+    def packParameters(self, user, mode):
         packet = []
 
         b0 = b'\x00'                                            # Parity bit
         b1 = b'\x00'                                            # Serial mode. 0 for run mode, 1 for egram mode
         b2 = struct.pack('B', user['MODE'])                     # Mode being used
         b3 = struct.pack('H', user['LRL'])                      # Lower rate limit
-        b4 = struct.pack('H', user['URL'])                      # Upper rate limit
+        b4 = struct.pack('H', self.regulateURL(user, mode))     # Upper rate limit
         b5 = struct.pack('H', self.parameter(user,'REACT'))     # Reaction time
         b6 = struct.pack('H', self.parameter(user,'RESPF'))     # Response factor RF in simulink
         b7 = struct.pack('d', self.parameter(user,'W_THRESH'))  # Walk threshold
@@ -169,6 +178,8 @@ class SerialCom:
         VPW = struct.unpack("H", ser.read(2))[0]
         VRP = struct.unpack("H", ser.read(2))[0]
         VS = struct.unpack("f", ser.read(4))[0]
+        ATR_SIGNAL = struct.unpack("d", ser.read(8))[0]
+        VENT_SIGNAL = struct.unpack("d", ser.read(8))[0]
 
         sum = MODE + LRL + URL + REACT + RESPF + W_THRESH + J_THRESH + R_THRESH + RECOVT + W_MSR + J_MSR + R_MSR + W_HYST + J_HYST + R_HYST + AA + APW + ARP + AS + VA + VPW + VRP + VS
 
@@ -176,7 +187,7 @@ class SerialCom:
     
     def writeToPacemaker(self, user, mode):
         # Pack values
-        packet, writeSum = self.packParameters(user)
+        packet, writeSum = self.packParameters(user, mode)
         COM = self.deviceIdentifier(needCom=True)
 
         # Establish serial connection and write to board

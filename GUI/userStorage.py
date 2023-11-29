@@ -15,9 +15,9 @@ class UserStorage:
         self.AS_VALUE = 4
         self.VS_VALUE = 4
         self.PVARP_VALUE = 250
-        self.W_HYST_VALUE = 0.5
+        self.W_HYST_VALUE = 0.75
         self.J_HYST_VALUE = 1.75
-        self.R_HYST_VALUE = 3
+        self.R_HYST_VALUE = 2.75
         self.RATESM_VALUE = 0
 
         #ass 2 additions:
