@@ -27,6 +27,29 @@ The pacemaker design project is a term assignment where we were tasked to develo
 
 ![image](https://github.com/mgiancola9/Pacemaker_3K/assets/97264168/99241314-10c3-4fac-8372-b4020acf3fa4)
 
+# Initialization Stateflow
+
+![image](https://github.com/mgiancola9/Pacemaker_3K/assets/97264168/465dbc9e-69fb-4cd3-9a0c-8b81686c46d8)
+
+# Send Parameters to DCM Function
+
+![image](https://github.com/mgiancola9/Pacemaker_3K/assets/97264168/716b5039-0573-418d-b05c-17a09515d570)
+
+# Pacemaker Modes Stateflow
+
+![image](https://github.com/mgiancola9/Pacemaker_3K/assets/97264168/48b4c83f-a200-441d-81d1-117083576490)
+
+# Rate Adaptability Stateflow
+
+![image](https://github.com/mgiancola9/Pacemaker_3K/assets/97264168/a373a6e4-e97a-48b9-acbc-5e98bd914052)
+
+# Output Layer
+
+
+
+
+
+
 
 
 
