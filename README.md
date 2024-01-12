@@ -43,7 +43,13 @@ The pacemaker design project is a term assignment where we were tasked to develo
 
 ![image](https://github.com/mgiancola9/Pacemaker_3K/assets/97264168/a373a6e4-e97a-48b9-acbc-5e98bd914052)
 
+# Hardware Hiding
+
+![image](https://github.com/mgiancola9/Pacemaker_3K/assets/97264168/e1b32b34-3e5d-4fc4-abb7-5540e18ba01c)
+
 # Output Layer
+
+![image](https://github.com/mgiancola9/Pacemaker_3K/assets/97264168/6f0c4a62-5725-475c-a01b-57baab427894)
 
 
 
