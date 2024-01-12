@@ -1,6 +1,6 @@
-#Pacemaker Design
+# Pacemaker Design
 
 Group Members
 
-[Nicholas Koenig] (koenin1)
+[Nicholas Koenig] ()
 
